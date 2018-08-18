@@ -1,8 +1,10 @@
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 #include <stdio.h>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 
 const int LEVEL_WIDTH  = 1280;
 const int LEVEL_HEIGHT = 1280;
@@ -18,8 +20,17 @@ static SDL_Surface* screenSurface = NULL;
 static SDL_Renderer* g_renderer = NULL;
 
 /* =========================================================================== */
+
 SDL_Texture* loadTexture(const char* path);
+
 /* =========================================================================== */
+
+double get_hp_time( void )
+{
+    struct timespec tp;
+    (void)clock_gettime( CLOCK_REALTIME, &tp );
+    return tp.tv_sec + tp.tv_nsec / 1E9;
+}
 
 /* =========================================================================== */
 /* A position in the world, used for physics */
@@ -42,6 +53,17 @@ class CPos {
         int x;
         int y;
 };
+
+/* =========================================================================== */
+
+class BoundingBox {
+    public:
+        int x;
+        int y;
+        int w;
+        int h;
+};
+
 /* =========================================================================== */
 
 class LTexture {
@@ -119,6 +141,7 @@ class Mob {
         LPos m_position;
         int getWidth(void);
         int getHeight(void);
+        BoundingBox getBoundingBox(void);
     private:
         SDL_Rect m_clip;
         LTexture* m_ltexture;
@@ -126,6 +149,16 @@ class Mob {
         int m_height;
         FPos m_world_position;
 };
+
+BoundingBox Mob::getBoundingBox(void)
+{
+    BoundingBox bb;
+    bb.w = m_width;
+    bb.h = m_height;
+    bb.x = m_position.x - bb.w/2;
+    bb.y = m_position.y - bb.h/2;
+    return bb;
+}
 
 int Mob::getWidth(void)
 {
@@ -268,8 +301,7 @@ void Camera::center(LPos position)
     this->m_camera_rect.y = y;
 }
 
-
-/* =========================================================================== */
+/* ======================================================================= */
 
 SDL_Texture* loadTexture(const char* path)
 {
@@ -288,63 +320,7 @@ SDL_Texture* loadTexture(const char* path)
     return result;
 }
 
-/* =========================================================================== */
-
-bool init(void)
-{
-    bool result = false;
-
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-    } else {
-        //Create window
-        g_window = SDL_CreateWindow(
-                "Prezoids",
-                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-        if (g_window == NULL) {
-            printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-        } else {
-            // Create renderer for window
-            g_renderer = SDL_CreateRenderer(
-                    g_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-            if (g_renderer == NULL) {
-                printf("Can't create renderer\n");
-            } else {
-                SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-                //Get window surface
-                int img_flags = IMG_INIT_PNG;
-                if (!(IMG_Init(img_flags) & img_flags)) {
-                    printf("SDL Image could not be initialized");
-                    printf("SDL Image error %s\n", IMG_GetError());
-                } else {
-                    screenSurface = SDL_GetWindowSurface(g_window);
-                    result = true;
-                }
-            }
-        }
-    }
-    return result;
-}
-
-/* =========================================================================== */
-
-void finish(void)
-{
-    if (g_renderer != NULL) {
-        SDL_DestroyRenderer(g_renderer);
-        g_renderer = NULL;
-    }
-    if (g_window != NULL) {
-        //Destroy window
-        SDL_DestroyWindow(g_window);
-        g_window = NULL;
-    }
-    //Quit SDL subsystems
-    SDL_Quit();
-}
-
-/* =========================================================================== */
+/* ======================================================================= */
 
 void main_loop(void)
 {
@@ -352,12 +328,8 @@ void main_loop(void)
     SDL_Event e;
     SDL_Texture* texture = NULL;
     LTexture test_ltexture;
-    SDL_Rect r1 = {0,0,64,64};
-    SDL_Rect r2 = {64,64,64,64};
-    SDL_Rect r3 = {0,64,64,64};
-
-    SDL_Rect r4 = {10,10,640,640};
     Camera camera;
+
     int x = 450;
     int y = 450;
     texture = loadTexture("Images/background1.png");
@@ -371,8 +343,10 @@ void main_loop(void)
     p2 = p1;
     mob1.setPosition(p1);
     mob1.setLTexture(&test_ltexture);
+    double cpu_usage = 0.0;
+    int k = 0;
 
-#define COUNT 20
+#define COUNT 800
     Mob* mobs[COUNT];
 
     for (int i = 0; i < COUNT; i++) {
@@ -382,8 +356,8 @@ void main_loop(void)
     }
     camera.center(p1);
 
-    printf("%d %d\n", p1.x, p1.y);
     while (keep_going) {
+
         while(SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 keep_going = false;
@@ -411,6 +385,7 @@ void main_loop(void)
         mob1.setPosition(p1);
         camera.center(p1);
 
+        double t1 = get_hp_time();
         SDL_RenderClear(g_renderer);
         camera.render(texture);
         camera.render(&mob1);
@@ -419,11 +394,83 @@ void main_loop(void)
             mobs[i]->move();
             camera.render(mobs[i]);
         }
+
+        double t2 = get_hp_time();
+        cpu_usage += (t2 - t1);
+        k++;
+        if (k > 100) {
+            printf("%f\n", cpu_usage);
+            k = 0;
+            cpu_usage = 0.0;
+        }
         SDL_RenderPresent(g_renderer);
     }
 }
 
-/* =========================================================================== */
+/* ======================================================================= */
+
+bool init(void)
+{
+    bool result = false;
+
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+    } else {
+        //Create window
+        g_window = SDL_CreateWindow(
+                "Prezoids",
+                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        if (g_window == NULL) {
+            printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+        } else {
+            // Create renderer for window
+            g_renderer = SDL_CreateRenderer(
+                    g_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+            if (g_renderer == NULL) {
+                printf("Can't create renderer\n");
+            } else {
+                SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                //Get window surface
+                int img_flags = IMG_INIT_PNG;
+                if (!(IMG_Init(img_flags) & img_flags)) {
+                    printf("SDL Image could not be initialized\n");
+                    printf("SDL Image error %s\n", IMG_GetError());
+                } else {
+                    screenSurface = SDL_GetWindowSurface(g_window);
+
+                    if (TTF_Init() == -1) {
+                        printf("SDL TTF could not be initialized\n");
+                        printf("SDL TTF Error %s\n", TTF_GetError());
+                    } else {
+                        result = true;
+                    }
+                }
+            }
+        }
+    }
+    return result;
+}
+
+/* ====================================================================== */
+
+void finish(void)
+{
+    if (g_renderer != NULL) {
+        SDL_DestroyRenderer(g_renderer);
+        g_renderer = NULL;
+    }
+    if (g_window != NULL) {
+        //Destroy window
+        SDL_DestroyWindow(g_window);
+        g_window = NULL;
+    }
+    IMG_Quit();
+    //Quit SDL subsystems
+    SDL_Quit();
+}
+
+/* ===================================================================== */
 
 int main(int argc, char** argv)
 {
@@ -435,6 +482,7 @@ int main(int argc, char** argv)
         //Update the surface
         SDL_UpdateWindowSurface(g_window);
         SDL_Delay(500);
+
         main_loop();
 
         finish();
