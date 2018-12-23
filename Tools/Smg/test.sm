@@ -1,0 +1,37 @@
+machine MoveMob env MobEnv
+
+event timeout
+event boundary
+event collision
+
+state Start
+    timeout -> Left
+    boundary -> Turn
+    collision -> Wait
+
+state Left
+    boundary -> Turn
+    timeout -> Turn
+    collision -> Wait
+
+state Turn
+    collision -> Wait
+
+state Right
+    boundary -> Turn
+    timeout -> Turn
+    collision -> Wait
+
+state Up
+    boundary -> Turn
+    timeout -> Turn
+    collision -> Wait
+
+state Down
+    boundary -> Turn
+    collision -> Wait
+
+state Wait
+    collision -> Wait
+
+

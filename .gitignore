@@ -1,0 +1,12 @@
+*.png
+*.bmp
+*.in
+*~
+configure
+missing
+autom4te.cache
+depcomp
+aclocal.m4
+install-sh
+compile
+*.swp
