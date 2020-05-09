@@ -261,9 +261,11 @@ def emit_code(code_file, indent, code, full_line=True):
         code_file.write("\n")
 
 def gen_header(header_filename):
+    # TODO
     pass
 
 def gen_implementation(header_filename):
+    # TODO
     pass
 
 def generate(filename):

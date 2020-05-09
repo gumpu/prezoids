@@ -18,3 +18,22 @@
     ../configure
     make
 
+## Start
+    cd build
+    ./src/freezoids
+
+## Regenerating autotools files
+
+    ./autoreconf
+
+## Ctags
+
+Best way to update the ctags file
+
+    ctags -R /usr/include/SDL2/ .
+
+## Background
+
+<https://elinux.org/images/4/43/Petazzoni.pdf>
+
+<https://autotools.io/>   Autotools Mythbuster

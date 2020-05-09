@@ -144,6 +144,7 @@ class Mob {
         LPos m_position;
         int getWidth(void);
         int getHeight(void);
+        void setSprite(int row, int col);
         BoundingBox getBoundingBox(void);
     private:
         SDL_Rect m_clip;
@@ -208,6 +209,12 @@ void Mob::setPosition(LPos pos)
     this->m_position = pos;
 }
 
+void Mob::setSprite(int row, int col)
+{
+    this->m_clip.x = 32*col;
+    this->m_clip.y = 32*row;
+}
+
 Mob::Mob()
 {
     this->m_position.x = 0;
@@ -217,9 +224,11 @@ Mob::Mob()
     this->m_height = 32;
     this->m_world_position.x = LEVEL_WIDTH*((rand() & 0xFF)/255.0F);
     this->m_world_position.y = LEVEL_HEIGHT*((rand() & 0xFF)/255.0F);
-    int n = rand()&0x1;
+
     this->m_clip.w = 32;
     this->m_clip.h = 32;
+    // Randomly select one of the four sprites
+    int n = rand()&0x1;
     this->m_clip.x = 32*n;
     n = rand()&0x1;
     this->m_clip.y = 32*n;
@@ -346,10 +355,11 @@ void main_loop(void)
     p2 = p1;
     mob1.setPosition(p1);
     mob1.setLTexture(&test_ltexture);
+    mob1.setSprite(2, 0);
     double cpu_usage = 0.0;
     int k = 0;
 
-#define COUNT 80
+#define COUNT 8000
     Mob* mobs[COUNT];
 
     for (int i = 0; i < COUNT; i++) {
@@ -510,8 +520,10 @@ int main(int argc, char** argv)
 {
     if (init()) {
         SDL_Surface* test = NULL;
-        SDL_FillRect(screenSurface, NULL, SDL_MapRGB( screenSurface->format, 0xFF, 0xFF, 0xFF ) );
+        SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
+
         test = SDL_LoadBMP("Images/test1.bmp");
+
         SDL_BlitSurface(test, NULL, screenSurface, NULL);
         //Update the surface
         SDL_UpdateWindowSurface(g_window);
