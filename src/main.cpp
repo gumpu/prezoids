@@ -11,6 +11,7 @@ const int LEVEL_HEIGHT = 1280;
 //Screen dimension constants
 const int SCREEN_WIDTH  = 800;
 const int SCREEN_HEIGHT = 640;
+const int JOYSTICK_DEAD_ZONE = 100;
 
 // The window we'll be rendering to
 static SDL_Window* g_window = NULL;
@@ -18,6 +19,8 @@ static SDL_Window* g_window = NULL;
 static SDL_Surface* screenSurface = NULL;
 // Window Renderer
 static SDL_Renderer* g_renderer = NULL;
+// Game controller
+static SDL_Joystick* g_game_controller = NULL;
 
 /* =========================================================================== */
 
@@ -346,7 +349,7 @@ void main_loop(void)
     double cpu_usage = 0.0;
     int k = 0;
 
-#define COUNT 800
+#define COUNT 80
     Mob* mobs[COUNT];
 
     for (int i = 0; i < COUNT; i++) {
@@ -356,29 +359,49 @@ void main_loop(void)
     }
     camera.center(p1);
 
-    while (keep_going) {
+    int delta_x = 0;
+    int delta_y = 0;
 
+    while (keep_going) {
         while(SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 keep_going = false;
             } else if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.sym == SDLK_q) {
                     keep_going = false;
-                } else if (e.key.keysym.sym == SDLK_a) {
-                    x -= 8;
-                    if (x < 0) { x = 0; }
-                } else if (e.key.keysym.sym == SDLK_d) {
-                    x += 8;
-                    if (x > 1200) { x = 1200; }
-                } else if (e.key.keysym.sym == SDLK_w) {
-                    y -= 8;
-                    if (y < 0) { y = 0; }
-                } else if (e.key.keysym.sym == SDLK_s) {
-                    y += 8;
-                    if (y > 1200) { y = 1200; }
+                }
+            } else if (e.type == SDL_JOYAXISMOTION) {
+                if (e.jaxis.which == 0) {
+                    if (e.jaxis.axis == 0) {
+                        int delta = (e.jaxis.value >> 11);
+                        if (e.jaxis.value < -JOYSTICK_DEAD_ZONE) {
+                            delta_x = delta;
+                        } else if (e.jaxis.value > JOYSTICK_DEAD_ZONE) {
+                            delta_x = delta;
+                        } else {
+                            delta_x = 0;
+                        }
+                    } else if (e.jaxis.axis == 1) {
+                        int delta = (e.jaxis.value >> 11);
+                        if (e.jaxis.value < -JOYSTICK_DEAD_ZONE) {
+                            delta_y = delta;
+                        } else if (e.jaxis.value > JOYSTICK_DEAD_ZONE) {
+                            delta_y = delta;
+                        } else {
+                            delta_y = 0;
+                        }
+                    }
+
                 }
             }
         }
+
+        x = x + delta_x;
+        y = y + delta_y;
+        if (x < 0) { x = 0; }
+        if (x > 1200) { x = 1200; }
+        if (y < 0) { y = 0; }
+        if (y > 1200) { y = 1200; }
 
         p1.x = x;
         p1.y = y;
@@ -413,9 +436,17 @@ bool init(void)
 {
     bool result = false;
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
         printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
     } else {
+        if (SDL_NumJoysticks() < 1) {
+            printf("Warning: No joysticks connected.\n");
+        } else {
+            g_game_controller = SDL_JoystickOpen(0);
+            if (g_game_controller == NULL) {
+                printf("Warning: unable to open the game controller.\n");
+            }
+        }
         //Create window
         g_window = SDL_CreateWindow(
                 "Prezoids",
@@ -464,6 +495,9 @@ void finish(void)
         //Destroy window
         SDL_DestroyWindow(g_window);
         g_window = NULL;
+    }
+    if (g_game_controller != NULL) {
+        SDL_JoystickClose(g_game_controller);
     }
     IMG_Quit();
     //Quit SDL subsystems

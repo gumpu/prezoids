@@ -3,3 +3,5 @@
 
 dist_pkgdata_DATA=spritesheet1.png background1.png
 
+all-local: $(dist_pkgdata_DATA)
+

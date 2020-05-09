@@ -5,7 +5,8 @@ AC_PREREQ([2.69])
 AC_INIT([Prezoids],[1.0],[rfsber@xs4all.nl])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADERS([config.h])
-# Tread warnings as errors: -Werror
+AC_CONFIG_AUX_DIR([build-aux])
+# warnings as errors: -Werror
 # This fails on % rules in makefiles, and we
 # want those.
 AM_INIT_AUTOMAKE([-Wall foreign])
