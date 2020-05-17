@@ -37,3 +37,6 @@ Best way to update the ctags file
 <https://elinux.org/images/4/43/Petazzoni.pdf>
 
 <https://autotools.io/>   Autotools Mythbuster
+
+<http://pcgbook.com/>  Procedural Content Generation in Games
+
