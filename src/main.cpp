@@ -1,12 +1,14 @@
 #include <cassert>
 #include <stdlib.h>
 #include <time.h>
-#include <string.h>
+#include <string>
 #include <stdio.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
+
+/* --------------------------------------------------------------------*/
 const int LEVEL_WIDTH  = 1280;
 const int LEVEL_HEIGHT = 1280;
 //Screen dimension constants
@@ -16,16 +18,16 @@ const int JOYSTICK_DEAD_ZONE = 100;
 
 // The window we'll be rendering to
 static SDL_Window* g_window = NULL;
-// The surface contained by the window
-static SDL_Surface* screenSurface = NULL;
 // Window Renderer
 static SDL_Renderer* g_renderer = NULL;
 // Game controller
 static SDL_Joystick* g_game_controller = NULL;
+// Game font
+static TTF_Font* g_font = NULL;
+
 
 /* =========================================================================== */
 SDL_Texture* loadTexture(const char* path);
-
 /* =========================================================================== */
 
 double get_hp_time( void )
@@ -73,10 +75,15 @@ class LTexture {
     public:
         LTexture();
         ~LTexture();
+
         LTexture(const LTexture& source);
         LTexture& operator=(const LTexture& source);
         bool loadFromFile(const char* path);
+        bool loadFromText(const char* text, SDL_Color color);
         void render(int x, int y, SDL_Rect* clip = NULL);
+        int getWidth(void) { return m_width; }
+        int getHeight(void) { return m_height; }
+        void release();
 
     private:
         SDL_Texture* m_texture;
@@ -106,6 +113,23 @@ void LTexture::render(int x, int y, SDL_Rect* clip)
     SDL_RenderCopy(g_renderer, this->m_texture, clip, &render_quad);
 }
 
+bool LTexture::loadFromText(const char* text, SDL_Color color)
+{
+    release();
+    SDL_Surface* text_surface = TTF_RenderText_Solid(g_font, text, color);
+    if (text_surface != NULL) {
+        m_texture = SDL_CreateTextureFromSurface(g_renderer, text_surface);
+        if (m_texture == NULL ) {
+            printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+        } else {
+            //Get image dimensions
+            this->m_width = text_surface->w;
+            this->m_height = text_surface->h;
+        }
+        SDL_FreeSurface(text_surface);
+    }
+}
+
 bool LTexture::loadFromFile(const char* path)
 {
     bool result = false;
@@ -130,7 +154,16 @@ bool LTexture::loadFromFile(const char* path)
     return result;
 }
 
-/* =========================================================================== */
+void LTexture::release(void)
+{
+    if (this->m_texture != NULL) {
+        SDL_DestroyTexture(this->m_texture);
+        this->m_texture = NULL;
+        this->m_width = NULL;
+        this->m_height = NULL;
+    }
+}
+
 /* =========================================================================== */
 
 class Mob {
@@ -341,7 +374,10 @@ class StartScreenState {
         ~StartScreenState();
         void render(Camera& camera);
     private:
-        SDL_Texture* background;
+        SDL_Texture* m_background;
+        LTexture m_text_texture;
+        char m_buffer[80];
+        int m_frame;
 };
 
 void StartScreenState::render(Camera& camera)
@@ -349,13 +385,19 @@ void StartScreenState::render(Camera& camera)
     LPos p1;
     p1.x = 20;
     p1.y = 20;
+    SDL_Color text_color = {0, 0, 0, 255};
     camera.center(p1);
-    camera.render(this->background);
+    camera.render(this->m_background);
+    sprintf(m_buffer, "Frame: %08x", m_frame);
+    m_text_texture.loadFromText(this->m_buffer, text_color);
+    m_text_texture.render( ( SCREEN_WIDTH - m_text_texture.getWidth() ) / 2, ( SCREEN_HEIGHT - m_text_texture.getHeight() ) / 2 );
+    this->m_frame++;
 }
 
 StartScreenState::StartScreenState()
 {
-    this->background = loadTexture("Images/start_screen_background.png");
+    this->m_frame = 1;
+    this->m_background = loadTexture("Images/start_screen_background.png");
 }
 
 StartScreenState::~StartScreenState()
@@ -418,12 +460,14 @@ void main_loop2(void)
     int delta_y = 0;
     Camera camera;
     StartScreenState start_screen_state;
+    int frame_count = 0;
+    SDL_Color text_color = {0, 0, 0, 255};
+
 
     while (keep_going) {
         keep_going = process_events(delta_x, delta_y, game_event);
 
         /* Process game event */
-
         SDL_RenderClear(g_renderer);
 
         switch (current_game_state) {
@@ -439,7 +483,7 @@ void main_loop2(void)
         }
 
         SDL_RenderPresent(g_renderer);
-
+        frame_count++;
     }
 }
 
@@ -583,14 +627,13 @@ bool init(void)
                 printf("Can't create renderer\n");
             } else {
                 SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-                //Get window surface
+                // Intialize image library
                 int img_flags = IMG_INIT_PNG;
                 if (!(IMG_Init(img_flags) & img_flags)) {
                     printf("SDL Image could not be initialized\n");
                     printf("SDL Image error %s\n", IMG_GetError());
                 } else {
-                    screenSurface = SDL_GetWindowSurface(g_window);
-
+                    // Intialize the font library so we can have text
                     if (TTF_Init() == -1) {
                         printf("SDL TTF could not be initialized\n");
                         printf("SDL TTF Error %s\n", TTF_GetError());
@@ -604,7 +647,17 @@ bool init(void)
     return result;
 }
 
-/* ====================================================================== */
+bool load_resources(void)
+{
+    bool result = false;
+    g_font = TTF_OpenFont("../Images/DejaVuSans.ttf", 28);
+    if (g_font == NULL) {
+        printf("Can't load font\n");
+    } else {
+        result = true;
+    }
+    return result;
+}
 
 void finish(void)
 {
@@ -620,8 +673,13 @@ void finish(void)
     if (g_game_controller != NULL) {
         SDL_JoystickClose(g_game_controller);
     }
-    IMG_Quit();
+    if (g_font != NULL) {
+        TTF_CloseFont(g_font);
+        g_font = NULL;
+    }
     //Quit SDL subsystems
+    TTF_Quit();
+    IMG_Quit();
     SDL_Quit();
 }
 
@@ -630,19 +688,23 @@ void finish(void)
 int main(int argc, char** argv)
 {
     if (init()) {
-        SDL_Surface* test = NULL;
+        if (load_resources()) {
+            // The surface contained by the window
+            SDL_Surface* screenSurface = NULL;
+            SDL_Surface* test = NULL;
+            screenSurface = SDL_GetWindowSurface(g_window);
+            SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
 
-        SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
-
-        // test = SDL_LoadBMP("Images/test1.bmp");
-        // SDL_BlitSurface(test, NULL, screenSurface, NULL);
-        //Update the surface
-        SDL_UpdateWindowSurface(g_window);
-        // SDL_Delay(2500);
-
-        main_loop2();
-
+            // test = SDL_LoadBMP("Images/test1.bmp");
+            // SDL_BlitSurface(test, NULL, screenSurface, NULL);
+            //Update the surface
+            SDL_UpdateWindowSurface(g_window);
+            // SDL_Delay(2500);
+            main_loop2();
+        }
         finish();
+    } else {
+        // Some libraries could not be initialized
     }
     return EXIT_SUCCESS;
 }
