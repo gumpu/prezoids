@@ -24,7 +24,7 @@
 
 ## Regenerating autotools files
 
-    ./autoreconf
+    autoreconf
 
 ## Ctags
 

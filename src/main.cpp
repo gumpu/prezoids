@@ -1,3 +1,4 @@
+#include <cassert>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
@@ -23,7 +24,6 @@ static SDL_Renderer* g_renderer = NULL;
 static SDL_Joystick* g_game_controller = NULL;
 
 /* =========================================================================== */
-
 SDL_Texture* loadTexture(const char* path);
 
 /* =========================================================================== */
@@ -73,7 +73,8 @@ class LTexture {
     public:
         LTexture();
         ~LTexture();
-
+        LTexture(const LTexture& source);
+        LTexture& operator=(const LTexture& source);
         bool loadFromFile(const char* path);
         void render(int x, int y, SDL_Rect* clip = NULL);
 
@@ -84,10 +85,8 @@ class LTexture {
 };
 
 LTexture::LTexture()
+    : m_texture(NULL), m_width(0), m_height(0)
 {
-    this->m_texture = NULL;
-    this->m_width = 0;
-    this->m_height = 0;
 }
 
 LTexture::~LTexture()
@@ -131,6 +130,7 @@ bool LTexture::loadFromFile(const char* path)
     return result;
 }
 
+/* =========================================================================== */
 /* =========================================================================== */
 
 class Mob {
@@ -332,6 +332,118 @@ SDL_Texture* loadTexture(const char* path)
     return result;
 }
 
+
+/* --------------------------------------------------------------------*/
+
+class StartScreenState {
+    public:
+        StartScreenState();
+        ~StartScreenState();
+        void render(Camera& camera);
+    private:
+        SDL_Texture* background;
+};
+
+void StartScreenState::render(Camera& camera)
+{
+    LPos p1;
+    p1.x = 20;
+    p1.y = 20;
+    camera.center(p1);
+    camera.render(this->background);
+}
+
+StartScreenState::StartScreenState()
+{
+    this->background = loadTexture("Images/start_screen_background.png");
+}
+
+StartScreenState::~StartScreenState()
+{
+    // TODO
+}
+
+
+/* ======================================================================= */
+
+enum GameState { StartScreen, MainMenu, OverWorld };
+enum GameEvent { None, ToMain, ToOverWorld, ToExit };
+/* ======================================================================= */
+
+bool process_events(int& delta_x, int& delta_y, enum GameEvent& game_event)
+{
+    SDL_Event e;
+    bool keep_going = true;
+    while(SDL_PollEvent(&e) != 0) {
+        if (e.type == SDL_QUIT) {
+            keep_going = false;
+        } else if (e.type == SDL_KEYDOWN) {
+            if (e.key.keysym.sym == SDLK_q) {
+                keep_going = false;
+            }
+        } else if (e.type == SDL_JOYAXISMOTION) {
+            if (e.jaxis.which == 0) {
+                if (e.jaxis.axis == 0) {
+                    int delta = (e.jaxis.value >> 11);
+                    if (e.jaxis.value < -JOYSTICK_DEAD_ZONE) {
+                        delta_x = delta;
+                    } else if (e.jaxis.value > JOYSTICK_DEAD_ZONE) {
+                        delta_x = delta;
+                    } else {
+                        delta_x = 0;
+                    }
+                } else if (e.jaxis.axis == 1) {
+                    int delta = (e.jaxis.value >> 11);
+                    if (e.jaxis.value < -JOYSTICK_DEAD_ZONE) {
+                        delta_y = delta;
+                    } else if (e.jaxis.value > JOYSTICK_DEAD_ZONE) {
+                        delta_y = delta;
+                    } else {
+                        delta_y = 0;
+                    }
+                }
+            }
+        }
+    }
+    return keep_going;
+}
+
+
+void main_loop2(void)
+{
+    enum GameState current_game_state = StartScreen;
+    enum GameEvent game_event = None;
+    bool keep_going = true;
+    int delta_x = 0;
+    int delta_y = 0;
+    Camera camera;
+    StartScreenState start_screen_state;
+
+    while (keep_going) {
+        keep_going = process_events(delta_x, delta_y, game_event);
+
+        /* Process game event */
+
+        SDL_RenderClear(g_renderer);
+
+        switch (current_game_state) {
+            case StartScreen:
+                start_screen_state.render(camera);
+                break;
+            case MainMenu:
+                break;
+            case OverWorld:
+                break;
+            default:
+                break;
+        }
+
+        SDL_RenderPresent(g_renderer);
+
+    }
+}
+
+
 /* ======================================================================= */
 
 void main_loop(void)
@@ -359,7 +471,7 @@ void main_loop(void)
     double cpu_usage = 0.0;
     int k = 0;
 
-#define COUNT 8000
+#define COUNT 10
     Mob* mobs[COUNT];
 
     for (int i = 0; i < COUNT; i++) {
@@ -401,7 +513,6 @@ void main_loop(void)
                             delta_y = 0;
                         }
                     }
-
                 }
             }
         }
@@ -520,16 +631,16 @@ int main(int argc, char** argv)
 {
     if (init()) {
         SDL_Surface* test = NULL;
+
         SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
 
-        test = SDL_LoadBMP("Images/test1.bmp");
-
-        SDL_BlitSurface(test, NULL, screenSurface, NULL);
+        // test = SDL_LoadBMP("Images/test1.bmp");
+        // SDL_BlitSurface(test, NULL, screenSurface, NULL);
         //Update the surface
         SDL_UpdateWindowSurface(g_window);
-        SDL_Delay(500);
+        // SDL_Delay(2500);
 
-        main_loop();
+        main_loop2();
 
         finish();
     }
