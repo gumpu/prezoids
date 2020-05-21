@@ -3,8 +3,8 @@
 
 class Tile {
     public:
-        static const int s_width{ 32 };
-        static const int s_height{ 32 };
+        static const int s_width{ 4*32 };
+        static const int s_height{ 4*32 };
         Tile();
         ~Tile();
         Tile(const Tile& source);

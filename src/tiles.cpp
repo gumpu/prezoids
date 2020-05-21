@@ -33,8 +33,8 @@ void Tile::setPosition(int x, int y)
 /* --------------------------------------------------------------------*/
 TileMap::TileMap() : m_tile_atlas(), m_tiles(NULL), m_number_of_rows(0), m_number_of_columns(0)
 {
-    m_number_of_rows = LEVEL_HEIGHT/Tile::s_height;
-    m_number_of_columns = LEVEL_WIDTH/Tile::s_width;
+    m_number_of_rows = UNDER_LEVEL_HEIGHT/Tile::s_height;
+    m_number_of_columns = UNDER_LEVEL_WIDTH/Tile::s_width;
     m_tiles = new Tile [m_number_of_rows * m_number_of_columns];
     m_tile_atlas.loadFromFile("Images/tile_atlas.png");
 }

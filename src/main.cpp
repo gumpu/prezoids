@@ -15,213 +15,15 @@
 #include "camera.h"
 #include "mobs.h"
 #include "tiles.h"
+#include "start_screen_state.h"
+#include "overworld_state.h"
+#include "underworld_state.h"
 
 double get_hp_time( void )
 {
     struct timespec tp;
     (void)clock_gettime( CLOCK_REALTIME, &tp );
     return tp.tv_sec + tp.tv_nsec / 1E9;
-}
-/* =========================================================================== */
-/* =========================================================================== */
-
-/* --------------------------------------------------------------------*/
-
-class StartScreenState {
-    public:
-        StartScreenState();
-        ~StartScreenState();
-        StartScreenState(const StartScreenState& source);
-        StartScreenState& operator=(const StartScreenState& source);
-        void render(Camera& camera);
-    private:
-        SDL_Texture* m_background;
-        LTexture m_text_texture;
-        char m_buffer[80];
-        int m_frame;
-};
-
-StartScreenState::StartScreenState()
-    : m_background(NULL), m_text_texture(), m_frame(0)
-{
-    m_frame = 1;
-    m_background = loadTexture("Images/start_screen_background.png");
-}
-
-StartScreenState::~StartScreenState()
-{
-   if (m_background != NULL) {
-        SDL_DestroyTexture(m_background);
-   }
-}
-
-void StartScreenState::render(Camera& camera)
-{
-    LevelPosition p1;
-    p1.x = 20;
-    p1.y = 20;
-    SDL_Color text_color = {0, 0, 0, 255};
-    camera.center(p1);
-    camera.render(m_background);
-    sprintf(m_buffer, "Frame: %08X", m_frame);
-    m_text_texture.loadFromText(m_buffer, text_color);
-    m_text_texture.render(40, 40);
-    // m_text_texture.render( ( SCREEN_WIDTH - m_text_texture.getWidth() ) / 2, ( SCREEN_HEIGHT - m_text_texture.getHeight() ) / 2 );
-    m_frame++;
-}
-
-/* --------------------------------------------------------------------*/
-
-class OverWorldState {
-    public:
-        OverWorldState();
-        ~OverWorldState();
-        OverWorldState(const OverWorldState& source);
-        OverWorldState& operator=(const OverWorldState& source);
-        void render(Camera& camera);
-        void movePlayer(int delta_x, int delta_y);
-    private:
-        SDL_Texture* m_background;
-        Mob m_player;
-        LevelPosition m_player_position;
-        LTexture m_sprite_sheet;
-        LTexture m_text_texture;
-        int m_frame;
-        int m_delta_x;
-        int m_delta_y;
-        char m_buffer[160];
-};
-
-OverWorldState::OverWorldState()
-    : m_background(), m_player(), m_player_position(),
-    m_sprite_sheet(), m_text_texture(), m_frame(0),
-    m_delta_x(0), m_delta_y(0)
-{
-    m_sprite_sheet.loadFromFile("Images/spritesheet1.png");
-    m_background = loadTexture("Images/background1.png");
-    m_player.setLTexture(&(m_sprite_sheet));
-    m_player.setSprite(2, 0);
-    m_player_position.x = 400;
-    m_player_position.y = 400;
-}
-
-OverWorldState::~OverWorldState()
-{
-   if (m_background != NULL) {
-        SDL_DestroyTexture(m_background);
-   }
-}
-
-void OverWorldState::movePlayer(int delta_x, int delta_y)
-{
-    int x = m_player_position.x;
-    int y = m_player_position.y;
-    m_delta_x = delta_x;
-    m_delta_y = delta_y;
-    x = x + delta_x;
-    y = y + delta_y;
-    if (x < 100) { x = 100; }
-    if (x > 1200) { x = 1200; }
-    if (y < 100) { y = 100; }
-    if (y > 1200) { y = 1200; }
-    m_player_position.x = x;
-    m_player_position.y = y;
-    m_player.setPosition(m_player_position);
-}
-
-void OverWorldState::render(Camera& camera)
-{
-    SDL_Color text_color = {0, 0, 0, 255};
-
-    camera.center(m_player_position);
-    camera.render(m_background);
-
-    sprintf(m_buffer, "Frame: %08X  dx %5d dy %5d", m_frame, m_delta_x, m_delta_y);
-    m_text_texture.loadFromText(m_buffer, text_color);
-    m_text_texture.render(40, 40);
-
-    camera.render(&(m_player));
-
-    m_frame++;
-}
-
-/* ======================================================================= */
-
-// Underworld
-class UnderWorldState {
-    public:
-        UnderWorldState();
-        ~UnderWorldState();
-        UnderWorldState(const UnderWorldState& source);
-        UnderWorldState& operator=(const UnderWorldState& source);
-
-        void render(Camera& camera);
-        void movePlayer(int delta_x, int delta_y);
-    private:
-        SDL_Texture* m_tile_atlas;
-        TileMap m_tile_map;
-        Mob m_player;
-        LevelPosition m_player_position;
-        LTexture m_sprite_sheet;
-        LTexture m_text_texture;
-        int m_frame;
-        int m_delta_x;
-        int m_delta_y;
-        char m_buffer[160];
-};
-
-UnderWorldState::UnderWorldState()
-    : m_tile_atlas(), m_tile_map(), m_player(), m_player_position(),
-    m_sprite_sheet(), m_text_texture(), m_frame(0),
-    m_delta_x(0), m_delta_y(0)
-{
-    m_sprite_sheet.loadFromFile("Images/spritesheet1.png");
-    m_player.setLTexture(&(m_sprite_sheet));
-    m_player.setSprite(2, 0);
-    m_player_position.x = 400;
-    m_player_position.y = 400;
-    m_tile_map.setupLevel();
-}
-
-UnderWorldState::~UnderWorldState()
-{
-    // Nothing
-}
-
-void UnderWorldState::movePlayer(int delta_x, int delta_y)
-{
-    int x = m_player_position.x;
-    int y = m_player_position.y;
-    m_delta_x = delta_x;
-    m_delta_y = delta_y;
-    x = x + delta_x;
-    y = y + delta_y;
-    if (x < 100) { x = 100; }
-    if (x > 1200) { x = 1200; }
-    if (y < 100) { y = 100; }
-    if (y > 1200) { y = 1200; }
-    m_player_position.x = x;
-    m_player_position.y = y;
-    m_player.setPosition(m_player_position);
-}
-
-void UnderWorldState::render(Camera& camera)
-{
-    SDL_Color text_color = {0, 0, 0, 255};
-
-    // Center on the player, so that when the player
-    // moves we also move the camera
-    camera.center(m_player_position);
-
-    m_tile_map.render(camera);
-
-    sprintf(m_buffer, "Frame: %08X  dx %5d dy %5d", m_frame, m_delta_x, m_delta_y);
-    m_text_texture.loadFromText(m_buffer, text_color);
-    m_text_texture.render(40, 40);
-
-    camera.render(&(m_player));
-
-    m_frame++;
 }
 
 /* ======================================================================= */
@@ -329,6 +131,8 @@ void main_loop2(void)
 
 /* ======================================================================= */
 
+
+#if 0
 void main_loop(void)
 {
     bool keep_going = true;
@@ -433,6 +237,7 @@ void main_loop(void)
         SDL_RenderPresent(g_renderer);
     }
 }
+#endif
 
 /* ======================================================================= */
 
@@ -529,16 +334,6 @@ int main(int argc, char** argv)
 {
     if (init()) {
         if (load_resources()) {
-            // The surface contained by the window
-            // SDL_Surface* screenSurface = NULL;
-            // SDL_Surface* test = NULL;
-            // screenSurface = SDL_GetWindowSurface(g_window);
-            // SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
-            // test = SDL_LoadBMP("Images/test1.bmp");
-            // SDL_BlitSurface(test, NULL, screenSurface, NULL);
-            //Update the surface
-            // SDL_UpdateWindowSurface(g_window);
-            // SDL_Delay(2500);
             main_loop2();
         }
         finish();

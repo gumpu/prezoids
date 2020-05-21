@@ -9,7 +9,7 @@ class Camera {
     public:
         Camera();
         ~Camera();
-        void center(LevelPosition position);
+        void center(LevelPosition position, int level_width, int level_height);
         void render(SDL_Texture* texture);
         void render(Mob* mob);
         void render(LTexture& tile_atlas, Tile& tile);

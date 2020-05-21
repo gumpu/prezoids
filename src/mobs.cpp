@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+
 #include "game_limits.h"
 #include "game_textures.h"
 #include "game_positions.h"
@@ -85,3 +86,5 @@ void Mob::setSprite(int row, int col)
     m_clip.x = 32*col;
     m_clip.y = 32*row;
 }
+
+/* ------------------------ end of file -------------------------------*/

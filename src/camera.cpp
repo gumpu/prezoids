@@ -70,7 +70,7 @@ void Camera::render(LTexture& tile_atlas, Tile& tile)
     }
 }
 
-void Camera::center(LevelPosition position)
+void Camera::center(LevelPosition position, int level_width, int level_height)
 {
     int w = m_camera_rect.w;
     int h = m_camera_rect.h;
@@ -79,8 +79,8 @@ void Camera::center(LevelPosition position)
 
     if (x < 0) { x = 0; }
     if (y < 0) { y = 0; }
-    if (x > (LEVEL_WIDTH - w)) { x = LEVEL_WIDTH - w; }
-    if (y > (LEVEL_HEIGHT - h)) { y = LEVEL_HEIGHT - h; }
+    if (x > (level_width - w)) { x = level_width - w; }
+    if (y > (level_height - h)) { y = level_height - h; }
     m_camera_rect.x = x;
     m_camera_rect.y = y;
 }
