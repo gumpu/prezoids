@@ -48,7 +48,7 @@ TileMap::~TileMap()
 
 int TileMap::getTileIndex(int column, int row)
 {
-    return column + row* m_number_of_columns;
+    return column + (row * m_number_of_columns);
 }
 
 
@@ -66,7 +66,7 @@ void TileMap::setupLevel(void)
     for (int c = 0; c < m_number_of_columns; c++) {
         for (int r = 0; r < m_number_of_rows; r++) {
             int x = c * Tile::s_width;
-            int y = c * Tile::s_height;
+            int y = r * Tile::s_height;
             m_tiles[getTileIndex(c, r)].setPosition(x, y);
         }
     }

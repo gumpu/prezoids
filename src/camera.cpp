@@ -57,8 +57,8 @@ void Camera::render(Mob* mob)
 void Camera::render(LTexture& tile_atlas, Tile& tile)
 {
     CameraRelativePosition p;
-    p.x = m_camera_rect.x - tile.m_position.x;
-    p.y = m_camera_rect.y - tile.m_position.y;
+    p.x = tile.m_position.x - m_camera_rect.x;
+    p.y = tile.m_position.y - m_camera_rect.y;
     if (p.x >= 0) {
         if (p.y >= 0) {
             if (p.x < SCREEN_WIDTH) {

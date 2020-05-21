@@ -1,5 +1,5 @@
 AM_CPPFLAGS=`sdl2-config --cflags`
-AM_CXXFLAGS=-Weffc++ -Wfatal-errors -Wall
+AM_CXXFLAGS=-Weffc++ -Wfatal-errors -Wall -O0
 AM_LDFLAGS=
 
 bin_PROGRAMS = freezoids
