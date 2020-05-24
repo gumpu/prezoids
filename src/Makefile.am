@@ -15,7 +15,7 @@ prezoids_SOURCES=main.cpp game_limits.cpp game_limits.h \
 				  camera.cpp camera.h \
 				  globals.cpp globals.h
 
-prut_SOURCES=ut.cpp
+prut_SOURCES=ut.cpp ut.h test_tiles.cpp test_tiles.h
 
 prezoids_LDADD=-lSDL2 -lSDL2_image -lSDL2_ttf
 
