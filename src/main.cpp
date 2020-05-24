@@ -91,6 +91,8 @@ void main_loop2(void)
     OverWorldState over_world_state;
     UnderWorldState under_world_state;
 
+    under_world_state.setupTestLevel();
+
     while (keep_going) {
         keep_going = process_events(delta_x, delta_y, game_event);
 

@@ -19,6 +19,8 @@ Mob::Mob()
     m_clip.x = 32*n;
     n = rand()&0x1;
     m_clip.y = 32*n;
+    m_width = 32;
+    m_height = 32;
 }
 
 Mob::~Mob()

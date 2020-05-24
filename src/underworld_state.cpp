@@ -22,7 +22,7 @@ UnderWorldState::UnderWorldState()
     m_player.setSprite(2, 0);
     m_player_position.x = 400;
     m_player_position.y = 400;
-    m_tile_map.setupLevel();
+    m_tile_map.setupTilePositions();
 }
 
 UnderWorldState::~UnderWorldState()
@@ -50,10 +50,12 @@ void UnderWorldState::movePlayer(int delta_x, int delta_y)
     m_delta_y = delta_y;
     x = x + delta_x;
     y = y + delta_y;
-    if (x < 100) { x = 100; }
-    if (x > (getWidth() - 100)) { x = getWidth() - 100; }
-    if (y < 100) { y = 100; }
-    if (y > (getHeight() - 100)) { y = getHeight() - 100; }
+
+    if (x < 0) { x = 0; }
+    if (x > getWidth()) { x = getWidth(); }
+    if (y < 0) { y = 0; }
+    if (y > getHeight()) { y = getHeight(); }
+
     m_player_position.x = x;
     m_player_position.y = y;
     m_player.setPosition(m_player_position);
@@ -71,13 +73,17 @@ void UnderWorldState::render(Camera& camera)
 
     sprintf(m_buffer, "Frame: %08X  dx %5d dy %5d", m_frame, m_delta_x, m_delta_y);
     m_text_texture.loadFromText(m_buffer, text_color);
-    m_text_texture.render(40, 40);
+    m_text_texture.render(40, 20);
 
     camera.render(&(m_player));
 
     m_frame++;
 }
 
+void UnderWorldState::setupTestLevel(void)
+{
+    m_tile_map.setupTestLevel();
+}
 
 
 /* ------------------------ end of file -------------------------------*/

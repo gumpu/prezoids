@@ -20,7 +20,7 @@
 
 ## Start
     cd build
-    ./src/freezoids
+    ./src/prezoids
 
 ## Regenerating autotools files
 
@@ -39,4 +39,8 @@ Best way to update the ctags file
 <https://autotools.io/>   Autotools Mythbuster
 
 <http://pcgbook.com/>  Procedural Content Generation in Games
+
+<https://www.youtube.com/watch?v=7Ik2vowGcU0>  Convex Polygon Collisions #1
+<https://github.com/OneLoneCoder/olcPixelGameEngine>
+
 

@@ -12,6 +12,8 @@ class UnderWorldState {
         int getHeight(void);
         void render(Camera& camera);
         void movePlayer(int delta_x, int delta_y);
+
+        void setupTestLevel(void);
     private:
         SDL_Texture* m_tile_atlas;
         TileMap m_tile_map;

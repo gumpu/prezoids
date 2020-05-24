@@ -2,9 +2,9 @@ AM_CPPFLAGS=`sdl2-config --cflags`
 AM_CXXFLAGS=-Weffc++ -Wfatal-errors -Wall
 AM_LDFLAGS=
 
-bin_PROGRAMS = freezoids
+bin_PROGRAMS = prezoids prut
 
-freezoids_SOURCES=main.cpp game_limits.cpp game_limits.h \
+prezoids_SOURCES=main.cpp game_limits.cpp game_limits.h \
 				  underworld_state.cpp underworld_state.h \
 				  overworld_state.cpp overworld_state.h \
 				  start_screen_state.cpp start_screen_state.h \
@@ -15,5 +15,7 @@ freezoids_SOURCES=main.cpp game_limits.cpp game_limits.h \
 				  camera.cpp camera.h \
 				  globals.cpp globals.h
 
-freezoids_LDADD=-lSDL2 -lSDL2_image -lSDL2_ttf
+prut_SOURCES=ut.cpp
+
+prezoids_LDADD=-lSDL2 -lSDL2_image -lSDL2_ttf
 

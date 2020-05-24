@@ -59,8 +59,8 @@ void Camera::render(LTexture& tile_atlas, Tile& tile)
     CameraRelativePosition p;
     p.x = tile.m_position.x - m_camera_rect.x;
     p.y = tile.m_position.y - m_camera_rect.y;
-    if (p.x >= 0) {
-        if (p.y >= 0) {
+    if (p.x >= -Tile::s_width) {
+        if (p.y >= -Tile::s_height) {
             if (p.x < SCREEN_WIDTH) {
                 if (p.y < SCREEN_HEIGHT) {
                     tile_atlas.render(p.x, p.y, &(tile.m_clip));
@@ -85,3 +85,4 @@ void Camera::center(LevelPosition position, int level_width, int level_height)
     m_camera_rect.y = y;
 }
 
+/* ------------------------ end of file -------------------------------*/

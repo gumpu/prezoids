@@ -15,9 +15,9 @@ Tile::Tile() : m_position(), m_clip()
     m_clip.w = s_width;
     m_clip.h = s_height;
     // Randomly select one of the 16 tile images
-    int n = rand()&0x2;
+    int n = rand()&0x3;
     m_clip.x = s_width*n;
-    n = rand()&0x2;
+    n = rand()&0x3;
     m_clip.y = s_height*n;
 
 }
@@ -28,6 +28,12 @@ void Tile::setPosition(int x, int y)
 {
     m_position.x = x;
     m_position.y = y;
+}
+
+void Tile::setTileShape(int c, int r)
+{
+    m_clip.x = s_width * c;
+    m_clip.y = s_height * r;
 }
 
 /* --------------------------------------------------------------------*/
@@ -61,7 +67,7 @@ void TileMap::render(Camera& camera)
     }
 }
 
-void TileMap::setupLevel(void)
+void TileMap::setupTilePositions(void)
 {
     for (int c = 0; c < m_number_of_columns; c++) {
         for (int r = 0; r < m_number_of_rows; r++) {
@@ -70,6 +76,36 @@ void TileMap::setupLevel(void)
             m_tiles[getTileIndex(c, r)].setPosition(x, y);
         }
     }
+}
+
+
+void TileMap::setupTestLevel(void)
+{
+    for (int c = 0; c < m_number_of_columns; c++) {
+        for (int r = 0; r < m_number_of_rows; r++) {
+            if ((r == 0) && (c == 0)) {
+                m_tiles[getTileIndex(c, r)].setTileShape(0, 0);
+            } else if ((r == 0) && (c == (m_number_of_columns - 1))) {
+                m_tiles[getTileIndex(c, r)].setTileShape(2, 0);
+            } else if ((r == (m_number_of_rows - 1)) && (c == 0)) {
+                m_tiles[getTileIndex(c, r)].setTileShape(0, 2);
+            } else if ((r == (m_number_of_rows - 1)) && (c == (m_number_of_columns - 1))) {
+                m_tiles[getTileIndex(c, r)].setTileShape(2, 2);
+            } else if (r == 0) {
+                m_tiles[getTileIndex(c, r)].setTileShape(1, 0);
+            } else if (r == (m_number_of_rows -1)) {
+                m_tiles[getTileIndex(c, r)].setTileShape(1, 2);
+            } else if (c == (m_number_of_columns -1)) {
+                m_tiles[getTileIndex(c, r)].setTileShape(2, 1);
+            } else if (c == 0) {
+                m_tiles[getTileIndex(c, r)].setTileShape(0, 1);
+            } else {
+                m_tiles[getTileIndex(c, r)].setTileShape(3, 0);
+            }
+        }
+    }
+
+    m_tiles[getTileIndex(3, 1)].setTileShape(0, 2);
 }
 
 /* ------------------------ end of file -------------------------------*/

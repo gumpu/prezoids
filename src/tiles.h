@@ -10,9 +10,11 @@ class Tile {
         Tile(const Tile& source);
         Tile& operator=(const Tile& source);
         void setPosition(int x, int y);
+        void setTileShape(int c, int r);
         LevelPosition m_position;
         SDL_Rect m_clip;
 };
+
 /* --------------------------------------------------------------------*/
 
 class TileMap {
@@ -22,12 +24,14 @@ class TileMap {
         TileMap(const TileMap& source);
         TileMap& operator=(const TileMap& source);
         void render(Camera& camera);
-        void setupLevel(void);
+        void setupTilePositions(void);
         int getTileIndex(int column, int row);
+        void setupTestLevel(void);
     private:
         LTexture m_tile_atlas;
         Tile* m_tiles;
         int m_number_of_rows;
         int m_number_of_columns;
 };
+
 #endif /* HG_TILES_H */
