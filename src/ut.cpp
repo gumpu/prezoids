@@ -62,7 +62,7 @@ void URegister(
     g_test_cases.push_back(UTestCase(setup, test, teardown, function_name, label));
 }
 
-void UOrigAssert(char* filename, uint32_t linenumber, bool value)
+void UOrigAssert(const char* filename, uint32_t linenumber, bool value)
 {
     if (!value) {
         printf("UAssert failed at file %s line %d\n", filename, linenumber);
