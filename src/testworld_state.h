@@ -1,12 +1,12 @@
-#ifndef HG_OVERWORLD_STATE_H
-#define HG_OVERWORLD_STATE_H
+#ifndef HG_TESTWORLD_STATE_H
+#define HG_TESTWORLD_STATE_H
 
-class OverWorldState {
+class TestWorldState {
     public:
-        OverWorldState();
-        ~OverWorldState();
-        OverWorldState(const OverWorldState& source);
-        OverWorldState& operator=(const OverWorldState& source);
+        TestWorldState();
+        ~TestWorldState();
+        TestWorldState(const TestWorldState& source);
+        TestWorldState& operator=(const TestWorldState& source);
 
         int getWidth(void);
         int getHeight(void);
@@ -24,4 +24,4 @@ class OverWorldState {
         char m_buffer[160];
 };
 
-#endif /* HG_OVERWORLD_STATE_H */
+#endif /* HG_TESTWORLD_STATE_H */

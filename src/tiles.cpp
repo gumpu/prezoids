@@ -78,7 +78,6 @@ void TileMap::setupTilePositions(void)
     }
 }
 
-
 void TileMap::setupTestLevel(void)
 {
     for (int c = 0; c < m_number_of_columns; c++) {

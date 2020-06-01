@@ -17,15 +17,18 @@
 #include "tiles.h"
 #include "start_screen_state.h"
 #include "overworld_state.h"
+#include "testworld_state.h"
 #include "underworld_state.h"
 #include "utils.h"
 
 /* ======================================================================= */
 
 enum GameState {
-    GS_StartScreen, GS_MainMenu, GS_OverWorld, GS_UnderWorld };
+    GS_StartScreen, GS_MainMenu, GS_OverWorld, GS_UnderWorld, GS_TestWorld
+};
 enum GameEvent {
-    GE_None, GE_ToMain, GE_ToOverWorld, GE_ToUnderWorld, GE_ToExit };
+    GE_None, GE_ToMain, GE_ToOverWorld, GE_ToUnderWorld, GE_ToTestWorld, GE_ToExit
+};
 
 /* ======================================================================= */
 
@@ -40,6 +43,8 @@ bool process_events(int& delta_x, int& delta_y, enum GameEvent& game_event)
         } else if (e.type == SDL_KEYDOWN) {
             if (e.key.keysym.sym == SDLK_q) {
                 keep_going = false;
+            } else if (e.key.keysym.sym == SDLK_t) {
+                game_event = GE_ToTestWorld;
             } else if (e.key.keysym.sym == SDLK_g) {
                 game_event = GE_ToOverWorld;
             } else if (e.key.keysym.sym == SDLK_u) {
@@ -83,6 +88,7 @@ void main_loop2(void)
     Camera camera;
     StartScreenState start_screen_state;
     OverWorldState over_world_state;
+    TestWorldState test_world_state;
     UnderWorldState under_world_state;
 
     under_world_state.setupTestLevel();
@@ -98,6 +104,9 @@ void main_loop2(void)
             case GE_ToUnderWorld:
                 current_game_state = GS_UnderWorld;
                 break;
+            case GE_ToTestWorld:
+                current_game_state = GS_TestWorld;
+                break;
             case GE_None:
             default:
                 break;
@@ -109,6 +118,10 @@ void main_loop2(void)
                 start_screen_state.render(camera);
                 break;
             case GS_MainMenu:
+                break;
+            case GS_TestWorld:
+                test_world_state.movePlayer(delta_x, delta_y);
+                test_world_state.render(camera);
                 break;
             case GS_OverWorld:
                 over_world_state.movePlayer(delta_x, delta_y);
@@ -126,6 +139,111 @@ void main_loop2(void)
 }
 
 /* ======================================================================= */
+
+bool init(void)
+{
+    bool result = false;
+
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+    } else {
+        if (SDL_NumJoysticks() < 1) {
+            printf("Warning: No joysticks connected.\n");
+        } else {
+            g_game_controller = SDL_JoystickOpen(0);
+            if (g_game_controller == NULL) {
+                printf("Warning: unable to open the game controller.\n");
+            }
+        }
+        //Create window
+        g_window = SDL_CreateWindow(
+                "Prezoids",
+                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        if (g_window == NULL) {
+            printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+        } else {
+            // Create renderer for window
+            g_renderer = SDL_CreateRenderer(
+                    g_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+            if (g_renderer == NULL) {
+                printf("Can't create renderer\n");
+            } else {
+                SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                // Intialize image library
+                int img_flags = IMG_INIT_PNG;
+                if (!(IMG_Init(img_flags) & img_flags)) {
+                    printf("SDL Image could not be initialized\n");
+                    printf("SDL Image error %s\n", IMG_GetError());
+                } else {
+                    // Intialize the font library so we can have text
+                    if (TTF_Init() == -1) {
+                        printf("SDL TTF could not be initialized\n");
+                        printf("SDL TTF Error %s\n", TTF_GetError());
+                    } else {
+                        result = true;
+                    }
+                }
+            }
+        }
+    }
+    return result;
+}
+
+bool load_resources(void)
+{
+    bool result = false;
+    g_font = TTF_OpenFont("../Images/DejaVuSansMono-Bold.ttf", 28);
+    if (g_font == NULL) {
+        printf("Can't load font\n");
+    } else {
+        result = true;
+    }
+    return result;
+}
+
+void finish(void)
+{
+    if (g_renderer != NULL) {
+        SDL_DestroyRenderer(g_renderer);
+        g_renderer = NULL;
+    }
+    if (g_window != NULL) {
+        //Destroy window
+        SDL_DestroyWindow(g_window);
+        g_window = NULL;
+    }
+    if (g_game_controller != NULL) {
+        SDL_JoystickClose(g_game_controller);
+        g_game_controller = NULL;
+    }
+    if (g_font != NULL) {
+        TTF_CloseFont(g_font);
+        g_font = NULL;
+    }
+    //Quit SDL subsystems
+    TTF_Quit();
+    IMG_Quit();
+    SDL_Quit();
+}
+
+/* ===================================================================== */
+
+int main(int argc, char** argv)
+{
+    if (init()) {
+        if (load_resources()) {
+            main_loop2();
+        }
+        finish();
+    } else {
+        // Some libraries could not be initialized
+    }
+    return EXIT_SUCCESS;
+}
+
+/* ------------------------ end of file -------------------------------*/
+
 
 
 #if 0
@@ -235,108 +353,3 @@ void main_loop(void)
 }
 #endif
 
-/* ======================================================================= */
-
-bool init(void)
-{
-    bool result = false;
-
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-    } else {
-        if (SDL_NumJoysticks() < 1) {
-            printf("Warning: No joysticks connected.\n");
-        } else {
-            g_game_controller = SDL_JoystickOpen(0);
-            if (g_game_controller == NULL) {
-                printf("Warning: unable to open the game controller.\n");
-            }
-        }
-        //Create window
-        g_window = SDL_CreateWindow(
-                "Prezoids",
-                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-        if (g_window == NULL) {
-            printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-        } else {
-            // Create renderer for window
-            g_renderer = SDL_CreateRenderer(
-                    g_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-            if (g_renderer == NULL) {
-                printf("Can't create renderer\n");
-            } else {
-                SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-                // Intialize image library
-                int img_flags = IMG_INIT_PNG;
-                if (!(IMG_Init(img_flags) & img_flags)) {
-                    printf("SDL Image could not be initialized\n");
-                    printf("SDL Image error %s\n", IMG_GetError());
-                } else {
-                    // Intialize the font library so we can have text
-                    if (TTF_Init() == -1) {
-                        printf("SDL TTF could not be initialized\n");
-                        printf("SDL TTF Error %s\n", TTF_GetError());
-                    } else {
-                        result = true;
-                    }
-                }
-            }
-        }
-    }
-    return result;
-}
-
-bool load_resources(void)
-{
-    bool result = false;
-    g_font = TTF_OpenFont("../Images/DejaVuSansMono-Bold.ttf", 28);
-    if (g_font == NULL) {
-        printf("Can't load font\n");
-    } else {
-        result = true;
-    }
-    return result;
-}
-
-void finish(void)
-{
-    if (g_renderer != NULL) {
-        SDL_DestroyRenderer(g_renderer);
-        g_renderer = NULL;
-    }
-    if (g_window != NULL) {
-        //Destroy window
-        SDL_DestroyWindow(g_window);
-        g_window = NULL;
-    }
-    if (g_game_controller != NULL) {
-        SDL_JoystickClose(g_game_controller);
-        g_game_controller = NULL;
-    }
-    if (g_font != NULL) {
-        TTF_CloseFont(g_font);
-        g_font = NULL;
-    }
-    //Quit SDL subsystems
-    TTF_Quit();
-    IMG_Quit();
-    SDL_Quit();
-}
-
-/* ===================================================================== */
-
-int main(int argc, char** argv)
-{
-    if (init()) {
-        if (load_resources()) {
-            main_loop2();
-        }
-        finish();
-    } else {
-        // Some libraries could not be initialized
-    }
-    return EXIT_SUCCESS;
-}
-
-/* ------------------------ end of file -------------------------------*/

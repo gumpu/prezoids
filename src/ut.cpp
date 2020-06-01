@@ -6,6 +6,7 @@
 #include <vector>
 #include "ut.h"
 #include "test_tiles.h"
+#include "test_polygons.h"
 
 class UTestCase {
     public:
@@ -114,9 +115,12 @@ static void URunAll(int argc, char** argv)
 int main(int argc, char** argv)
 {
     register_tiles_tests();
+    register_polygon_tests();
+
     if (g_test_cases.size() > 0) {
         URunAll(argc, argv);
     }
+
     return EXIT_SUCCESS;
 }
 
