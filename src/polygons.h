@@ -10,6 +10,8 @@ class Polygon {
         SDL_Point& operator[] (int i) { return m_points[i]; }
         int len(void) { return m_number_of_points; }
         const SDL_Point* points(void) { return m_points; }
+        void translate(int dx, int dy);
+        void rotate(float angle);
     private:
         int m_number_of_points;
         SDL_Point* m_points;

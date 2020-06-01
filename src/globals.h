@@ -1,7 +1,6 @@
 #ifndef HG_GLOBALS_H
 #define HG_GLOBALS_H
 
-/* --------------------------------------------------------------------*/
 // Global variables
 
 // The window we'll be rendering to

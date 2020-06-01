@@ -5,6 +5,25 @@
 #include <SDL.h>
 #include "polygons.h"
 
+Polygon source_polygon(4);
+
+static void setup(void)
+{
+    source_polygon[0].x = 0;
+    source_polygon[0].y = 0;
+    source_polygon[1].x = 100;
+    source_polygon[1].y = 0;
+    source_polygon[2].x = 100;
+    source_polygon[2].y = 100;
+    source_polygon[3].x = 0;
+    source_polygon[3].y = 100;
+}
+
+void test_polygon_translate(void)
+{
+
+}
+
 void test_polygon_creation(void)
 {
     Polygon test_polygon(5);
@@ -25,6 +44,7 @@ void test_polygon_creation(void)
 void register_polygon_tests(void)
 {
     URegister(NULL,  NULL, TSTFUN(test_polygon_creation), "Polygon creation");
+    URegister(setup, NULL, TSTFUN(test_polygon_translate), "Translate Polygon");
 }
 
 /* ------------------------ end of file -------------------------------*/

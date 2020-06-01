@@ -50,6 +50,8 @@ void TestWorldState::movePlayer(int delta_x, int delta_y)
 
 void TestWorldState::render(Camera& camera)
 {
+    static float r = 0.0;
+
     SDL_Color text_color = {0, 0, 0, 255};
     Polygon test_polygon(4);
 
@@ -74,9 +76,16 @@ void TestWorldState::render(Camera& camera)
     camera.render(&(m_player));
 
     SDL_SetRenderDrawColor(g_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    test_polygon.translate(-10, -10);
+    test_polygon.rotate(r*3.141592);
+    test_polygon.translate(200, 200);
     SDL_RenderDrawLines(g_renderer, test_polygon.points(), test_polygon.len());
 
     m_frame++;
+    r = r + 0.005;
+    if (r > 2.0) {
+        r = 0.0;
+    }
 }
 
 int TestWorldState::getWidth(void)
