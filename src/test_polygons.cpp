@@ -21,7 +21,11 @@ static void setup(void)
 
 void test_polygon_translate(void)
 {
-
+    source_polygon.translate(10, 15);
+    UAssert(source_polygon[0].x == 10);
+    UAssert(source_polygon[0].y == 15);
+    UAssert(source_polygon[3].x == 10);
+    UAssert(source_polygon[3].y == 115);
 }
 
 void test_polygon_creation(void)

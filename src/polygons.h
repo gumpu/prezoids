@@ -12,6 +12,7 @@ class Polygon {
         const SDL_Point* points(void) { return m_points; }
         void translate(int dx, int dy);
         void rotate(float angle);
+        SDL_Point center(void);
     private:
         int m_number_of_points;
         SDL_Point* m_points;

@@ -27,6 +27,20 @@ void Polygon::translate(int dx, int dy)
     }
 }
 
+SDL_Point Polygon::center(void)
+{
+    SDL_Point p;
+    float xs = 0.0;
+    float ys = 0.0;
+    for (int i = 0; i < m_number_of_points; i++) {
+        xs += m_points[i].x;
+        ys += m_points[i].y;
+    }
+    p.x = int(xs/m_number_of_points);
+    p.y = int(ys/m_number_of_points);
+    return p;
+}
+
 void Polygon::rotate(float angle)
 {
     float sa = sin(angle);

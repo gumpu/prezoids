@@ -99,6 +99,4 @@ int TestWorldState::getHeight(void)
     return OVER_LEVEL_WIDTH;
 }
 
-
-
 /* ------------------------ end of file -------------------------------*/
