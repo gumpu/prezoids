@@ -5,8 +5,8 @@ class Mob {
     public:
         Mob();
         ~Mob();
-        Mob(const Mob& source);
-        Mob& operator=(const Mob& source);
+        Mob(const Mob& source) = delete;
+        Mob& operator=(const Mob& source) = delete;
 
         void move(void);
         void setPosition(LevelPosition pos);

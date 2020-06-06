@@ -5,8 +5,8 @@ class LTexture {
     public:
         LTexture();
         ~LTexture();
-        LTexture(const LTexture& source);
-        LTexture& operator=(const LTexture& source);
+        LTexture(const LTexture& source) = delete;
+        LTexture& operator=(const LTexture& source) = delete;
 
         bool loadFromFile(const char* path);
         bool loadFromText(const char* text, SDL_Color color);

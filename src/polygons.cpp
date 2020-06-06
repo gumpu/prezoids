@@ -3,10 +3,10 @@
 #include "polygons.h"
 
 Polygon::Polygon(int count)
-    : m_number_of_points(count), m_points(NULL)
+    : m_capacity(count), m_number_of_points(0), m_points(NULL)
 {
     m_points = new SDL_Point[count];
-    for (int i = 0; i < m_number_of_points; i++) {
+    for (int i = 0; i < m_capacity; i++) {
         m_points[i].x = 0;
         m_points[i].y = 0;
     }
@@ -17,6 +17,14 @@ Polygon::~Polygon()
     if (m_points != NULL) {
         delete[] m_points;
     }
+}
+
+SDL_Point& Polygon::operator[] (int i)
+{
+    if ((i+1) > m_number_of_points) {
+        m_number_of_points = i + 1;
+    }
+    return m_points[i];
 }
 
 void Polygon::translate(int dx, int dy)
@@ -52,6 +60,16 @@ void Polygon::rotate(float angle)
         m_points[i].x = (int)x;
         m_points[i].y = (int)y;
     }
+}
+
+Polygon& Polygon::operator=(const Polygon& source)
+{
+    int i;
+    for (i = 0; i < source.m_number_of_points; ++i) {
+        m_points[i].x = source.m_points[i].x;
+        m_points[i].y = source.m_points[i].y;
+    }
+    return *this;
 }
 
 /* ------------------------ end of file -------------------------------*/

@@ -112,6 +112,7 @@ void main_loop2(void)
                 break;
         }
 
+        SDL_SetRenderDrawColor(g_renderer, 0xA0, 0xA0, 0xA0, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(g_renderer);
         switch (current_game_state) {
             case GS_StartScreen:

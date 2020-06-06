@@ -45,10 +45,28 @@ void test_polygon_creation(void)
     UAssert(test_polygon.len() == 5);
 }
 
+void test_polygon_copy(void)
+{
+    Polygon test_polygon(5);
+
+    /* Perform an operation on the source */
+    source_polygon.translate(10, 15);
+    UAssert(source_polygon[3].x == 10);
+    UAssert(source_polygon[3].y == 115);
+
+    /* Make a copy */
+    test_polygon = source_polygon;
+
+    /* Values should match */
+    UAssert(test_polygon[3].x == 10);
+    UAssert(test_polygon[3].y == 115);
+}
+
 void register_polygon_tests(void)
 {
     URegister(NULL,  NULL, TSTFUN(test_polygon_creation), "Polygon creation");
     URegister(setup, NULL, TSTFUN(test_polygon_translate), "Translate Polygon");
+    URegister(setup, NULL, TSTFUN(test_polygon_copy), "Copy Polygon");
 }
 
 /* ------------------------ end of file -------------------------------*/

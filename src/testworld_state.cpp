@@ -65,9 +65,7 @@ void TestWorldState::render(Camera& camera)
     test_polygon[3].y = 10;
 
     camera.center(m_player_position, getWidth(), getHeight());
-    camera.render(m_background);
-
-
+//    camera.render(m_background);
 
     sprintf(m_buffer, "TW Frame: %08X dx %5d dy %5d", m_frame, m_delta_x, m_delta_y);
     m_text_texture.loadFromText(m_buffer, text_color);
@@ -75,12 +73,16 @@ void TestWorldState::render(Camera& camera)
 
     camera.render(&(m_player));
 
-    SDL_SetRenderDrawColor(g_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-    test_polygon.translate(-10, -10);
-    test_polygon.rotate(r*3.141592);
-    test_polygon.translate(200, 200);
-    SDL_RenderDrawLines(g_renderer, test_polygon.points(), test_polygon.len());
-
+    SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE);
+    for (int i = 0; i < 160; i = i + 20)
+    {
+        SDL_Point p = test_polygon.center();
+        test_polygon.translate(-p.x, -p.y);
+        test_polygon.rotate(r*3.141592);
+        test_polygon.translate(200 + i, 200 + i/4);
+        SDL_RenderDrawLines(g_renderer, test_polygon.points(), test_polygon.len());
+    }
+    SDL_SetRenderDrawColor(g_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
     m_frame++;
     r = r + 0.005;
     if (r > 2.0) {
