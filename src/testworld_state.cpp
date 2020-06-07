@@ -21,7 +21,7 @@ TestWorldState::TestWorldState()
 
 TestWorldState::~TestWorldState()
 {
-   if (m_background != NULL) {
+   if (m_background != nullptr) {
         SDL_DestroyTexture(m_background);
    }
 }

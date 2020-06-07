@@ -20,7 +20,7 @@ OverWorldState::OverWorldState()
 
 OverWorldState::~OverWorldState()
 {
-   if (m_background != NULL) {
+   if (m_background != nullptr) {
         SDL_DestroyTexture(m_background);
    }
 }
@@ -68,7 +68,5 @@ int OverWorldState::getHeight() const
 {
     return OVER_LEVEL_WIDTH;
 }
-
-
 
 /* ------------------------ end of file -------------------------------*/

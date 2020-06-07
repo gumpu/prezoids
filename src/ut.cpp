@@ -1,4 +1,3 @@
-#include <cstdint>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -7,6 +6,7 @@
 #include "ut.h"
 #include "test_tiles.h"
 #include "test_polygons.h"
+#include "test_mobs.h"
 
 class UTestCase {
     public:
@@ -48,7 +48,7 @@ UTestCase::UTestCase(
 { }
 
 UTestCase::UTestCase()
-    : m_setup_function(NULL), m_test_function(NULL), m_teardown_function(NULL),
+    : m_setup_function(nullptr), m_test_function(nullptr), m_teardown_function(nullptr),
     m_function_name(), m_label()
 { }
 
@@ -72,11 +72,11 @@ void UOrigAssert(const char* filename, uint32_t linenumber, bool value)
 static void URunCase(UTestCase* test_case)
 {
     printf("Test: %s\n", test_case->m_label.c_str());
-    if (test_case->m_setup_function != NULL) {
+    if (test_case->m_setup_function != nullptr) {
         test_case->m_setup_function();
     }
     test_case->m_test_function();
-    if (test_case->m_teardown_function != NULL) {
+    if (test_case->m_teardown_function != nullptr) {
         test_case->m_teardown_function();
     }
     printf("Done: %s\n", test_case->m_label.c_str());
@@ -116,6 +116,7 @@ int main(int argc, char** argv)
 {
     register_tiles_tests();
     register_polygon_tests();
+    register_mob_tests();
 
     if (g_test_cases.size() > 0) {
         URunAll(argc, argv);

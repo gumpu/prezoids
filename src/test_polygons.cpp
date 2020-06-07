@@ -5,9 +5,9 @@
 #include <SDL.h>
 #include "polygons.h"
 
-Polygon source_polygon(4);
+static Polygon source_polygon(4);
 
-static void setup(void)
+static void setup()
 {
     source_polygon[0].x = 0;
     source_polygon[0].y = 0;
@@ -19,7 +19,7 @@ static void setup(void)
     source_polygon[3].y = 100;
 }
 
-void test_polygon_translate(void)
+static void test_polygon_translate()
 {
     source_polygon.translate(10, 15);
     UAssert(source_polygon[0].x == 10);
@@ -28,7 +28,7 @@ void test_polygon_translate(void)
     UAssert(source_polygon[3].y == 115);
 }
 
-void test_polygon_creation(void)
+static void test_polygon_creation()
 {
     Polygon test_polygon(5);
 
@@ -45,7 +45,7 @@ void test_polygon_creation(void)
     UAssert(test_polygon.len() == 5);
 }
 
-void test_polygon_copy(void)
+static void test_polygon_copy()
 {
     Polygon test_polygon(5);
 
@@ -62,11 +62,11 @@ void test_polygon_copy(void)
     UAssert(test_polygon[3].y == 115);
 }
 
-void register_polygon_tests(void)
+void register_polygon_tests()
 {
-    URegister(NULL,  NULL, TSTFUN(test_polygon_creation), "Polygon creation");
-    URegister(setup, NULL, TSTFUN(test_polygon_translate), "Translate Polygon");
-    URegister(setup, NULL, TSTFUN(test_polygon_copy), "Copy Polygon");
+    URegister(nullptr,  nullptr, TSTFUN(test_polygon_creation), "Polygon creation");
+    URegister(setup, nullptr, TSTFUN(test_polygon_translate), "Translate Polygon");
+    URegister(setup, nullptr, TSTFUN(test_polygon_copy), "Copy Polygon");
 }
 
 /* ------------------------ end of file -------------------------------*/

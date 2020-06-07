@@ -9,7 +9,7 @@
 #include "start_screen_state.h"
 
 StartScreenState::StartScreenState()
-    : m_background(NULL), m_text_texture(), m_frame(0)
+    : m_background(nullptr), m_text_texture(), m_frame(0)
 {
     m_frame = 1;
     m_background = loadTexture("Images/start_screen_background.png");
@@ -17,7 +17,7 @@ StartScreenState::StartScreenState()
 
 StartScreenState::~StartScreenState()
 {
-   if (m_background != NULL) {
+   if (m_background != nullptr) {
         SDL_DestroyTexture(m_background);
    }
 }

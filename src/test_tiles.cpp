@@ -28,8 +28,8 @@ void test_tile_map_dimensions()
 
 void register_tiles_tests()
 {
-    URegister(NULL,  NULL, TSTFUN(test_tile_dimensions), "Tile dimensions");
-    URegister(NULL,  NULL, TSTFUN(test_tile_map_dimensions), "Tile map dimensions");
+    URegister(nullptr,  nullptr, TSTFUN(test_tile_dimensions), "Tile dimensions");
+    URegister(nullptr,  nullptr, TSTFUN(test_tile_map_dimensions), "Tile map dimensions");
 }
 
 /* ------------------------ end of file -------------------------------*/

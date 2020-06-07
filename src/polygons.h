@@ -15,8 +15,8 @@ class Polygon {
         Polygon(const Polygon& source);
         Polygon& operator=(const Polygon& source);
         FLT_Point& operator[] (int i);
-        int len(void) { return m_number_of_points; }
-        int capacity(void) { return m_capacity; }
+        int len(void) const { return m_number_of_points; }
+        int capacity(void) const { return m_capacity; }
         const FLT_Point* points(void) { return m_points; }
 
         void translate(float dx, float dy);

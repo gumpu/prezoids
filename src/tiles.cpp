@@ -37,7 +37,7 @@ void Tile::setTileShape(int c, int r)
 }
 
 /* --------------------------------------------------------------------*/
-TileMap::TileMap() : m_tile_atlas(), m_tiles(NULL), m_number_of_rows(0), m_number_of_columns(0)
+TileMap::TileMap() : m_tile_atlas(), m_tiles(nullptr), m_number_of_rows(0), m_number_of_columns(0)
 {
     m_number_of_rows = UNDER_LEVEL_HEIGHT/Tile::s_height;
     m_number_of_columns = UNDER_LEVEL_WIDTH/Tile::s_width;
@@ -47,7 +47,7 @@ TileMap::TileMap() : m_tile_atlas(), m_tiles(NULL), m_number_of_rows(0), m_numbe
 
 TileMap::~TileMap()
 {
-    if (m_tiles != NULL) {
+    if (m_tiles != nullptr) {
         delete[] m_tiles;
     }
 }

@@ -21,18 +21,20 @@ Camera::Camera() : m_camera_rect()
 
 Camera::~Camera() { }
 
-void Camera::render(SDL_Texture* texture)
+void Camera::render(SDL_Texture* texture) const
 {
-    SDL_RenderCopy(g_renderer, texture, &(m_camera_rect), NULL);
+    SDL_RenderCopy(g_renderer, texture, &(m_camera_rect), nullptr);
 }
 
-void Camera::render(Mob* mob)
+void Camera::render(Mob* mob) const
 {
     CameraRelativePosition pos;
+    LevelPosition mob_position;
     int w = mob->getWidth();
     int h = mob->getHeight();
-    pos.x = mob->m_position.x - w/2;
-    pos.y = mob->m_position.y - h/2;
+    mob_position = mob->getLevelPosition();
+    pos.x = mob_position.x - w/2;
+    pos.y = mob_position.y - h/2;
     pos.x = pos.x - m_camera_rect.x;
 
     if (pos.x < (0-w)) {
@@ -55,7 +57,14 @@ void Camera::render(Mob* mob)
     }
 }
 
-void Camera::render(LTexture& tile_atlas, Tile& tile)
+void Camera::render(PolyMob* mob) const
+{
+    CameraRelativePosition pos;
+    LevelPosition mob_position;
+
+}
+
+void Camera::render(LTexture& tile_atlas, Tile& tile) const
 {
     CameraRelativePosition p;
     p.x = tile.m_position.x - m_camera_rect.x;

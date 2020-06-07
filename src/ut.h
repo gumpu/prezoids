@@ -1,6 +1,8 @@
 #ifndef HG_UT_H
 #define HG_UT_H
 
+#include <cstdint>
+
 #define UAssert( expression ) UOrigAssert(__FILE__, __LINE__, expression)
 #define TSTFUN(f) f, #f
 typedef void voidfunc_t();

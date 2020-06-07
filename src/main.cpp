@@ -147,7 +147,7 @@ bool init(void)
             printf("Warning: No joysticks connected.\n");
         } else {
             g_game_controller = SDL_JoystickOpen(0);
-            if (g_game_controller == NULL) {
+            if (g_game_controller == nullptr) {
                 printf("Warning: unable to open the game controller.\n");
             }
         }
@@ -156,13 +156,13 @@ bool init(void)
                 "Prezoids",
                 SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                 SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-        if (g_window == NULL) {
+        if (g_window == nullptr) {
             printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
         } else {
             // Create renderer for window
             g_renderer = SDL_CreateRenderer(
                     g_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-            if (g_renderer == NULL) {
+            if (g_renderer == nullptr) {
                 printf("Can't create renderer\n");
             } else {
                 SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -190,7 +190,7 @@ bool load_resources(void)
 {
     bool result = false;
     g_font = TTF_OpenFont("../Images/DejaVuSansMono-Bold.ttf", 28);
-    if (g_font == NULL) {
+    if (g_font == nullptr) {
         printf("Can't load font\n");
     } else {
         result = true;
@@ -200,22 +200,22 @@ bool load_resources(void)
 
 void finish(void)
 {
-    if (g_renderer != NULL) {
+    if (g_renderer != nullptr) {
         SDL_DestroyRenderer(g_renderer);
-        g_renderer = NULL;
+        g_renderer = nullptr;
     }
-    if (g_window != NULL) {
+    if (g_window != nullptr) {
         //Destroy window
         SDL_DestroyWindow(g_window);
-        g_window = NULL;
+        g_window = nullptr;
     }
-    if (g_game_controller != NULL) {
+    if (g_game_controller != nullptr) {
         SDL_JoystickClose(g_game_controller);
-        g_game_controller = NULL;
+        g_game_controller = nullptr;
     }
-    if (g_font != NULL) {
+    if (g_font != nullptr) {
         TTF_CloseFont(g_font);
-        g_font = NULL;
+        g_font = nullptr;
     }
     //Quit SDL subsystems
     TTF_Quit();
@@ -247,7 +247,7 @@ void main_loop(void)
 {
     bool keep_going = true;
     SDL_Event e;
-    SDL_Texture* texture = NULL;
+    SDL_Texture* texture = nullptr;
     LTexture test_ltexture;
     Camera camera;
 

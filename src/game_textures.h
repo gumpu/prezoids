@@ -10,7 +10,7 @@ class LTexture {
 
         bool loadFromFile(const char* path);
         bool loadFromText(const char* text, SDL_Color color);
-        void render(int x, int y, SDL_Rect* clip = NULL);
+        void render(int x, int y, SDL_Rect* clip = nullptr);
         int getWidth() const { return m_width; }
         int getHeight() const { return m_height; }
         void release();

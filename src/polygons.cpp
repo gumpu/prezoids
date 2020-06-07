@@ -3,7 +3,7 @@
 #include "polygons.h"
 
 Polygon::Polygon(int count)
-    : m_capacity(count), m_number_of_points(0), m_points(NULL)
+    : m_capacity(count), m_number_of_points(0), m_points(nullptr)
 {
     m_points = new FLT_Point[count];
     for (int i = 0; i < m_capacity; i++) {
@@ -14,7 +14,7 @@ Polygon::Polygon(int count)
 
 Polygon::~Polygon()
 {
-    if (m_points != NULL) {
+    if (m_points != nullptr) {
         delete[] m_points;
     }
 }

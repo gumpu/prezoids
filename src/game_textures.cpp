@@ -5,13 +5,13 @@
 #include "game_textures.h"
 
 LTexture::LTexture()
-    : m_texture(NULL), m_width(0), m_height(0)
+    : m_texture(nullptr), m_width(0), m_height(0)
 {
 }
 
 LTexture::~LTexture()
 {
-    if (m_texture == NULL) {
+    if (m_texture == nullptr) {
         SDL_DestroyTexture(m_texture);
     }
 }
@@ -19,7 +19,7 @@ LTexture::~LTexture()
 void LTexture::render(int x, int y, SDL_Rect* clip)
 {
     SDL_Rect render_quad = {x, y, m_width, m_height};
-    if (clip != NULL) {
+    if (clip != nullptr) {
         render_quad.w = clip->w;
         render_quad.h = clip->h;
     }
@@ -32,9 +32,9 @@ bool LTexture::loadFromText(const char* text, SDL_Color color)
 
     release();
     SDL_Surface* text_surface = TTF_RenderText_Solid(g_font, text, color);
-    if (text_surface != NULL) {
+    if (text_surface != nullptr) {
         m_texture = SDL_CreateTextureFromSurface(g_renderer, text_surface);
-        if (m_texture == NULL ) {
+        if (m_texture == nullptr ) {
             printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
         } else {
             //Get image dimensions
@@ -54,11 +54,11 @@ bool LTexture::loadFromFile(const char* path)
     SDL_Texture* texture;
 
     SDL_Surface* loaded_surface = IMG_Load(path);
-    if (loaded_surface == NULL) {
+    if (loaded_surface == nullptr) {
         printf("Failed to load %s\n", path);
     } else {
         texture = SDL_CreateTextureFromSurface(g_renderer, loaded_surface);
-        if (texture == NULL) {
+        if (texture == nullptr) {
             printf("Unable to create texture from %s\n", path);
         } else {
             m_texture = texture;
@@ -74,9 +74,9 @@ bool LTexture::loadFromFile(const char* path)
 
 void LTexture::release()
 {
-    if (m_texture != NULL) {
+    if (m_texture != nullptr) {
         SDL_DestroyTexture(m_texture);
-        m_texture = NULL;
+        m_texture = nullptr;
         m_width = 0;
         m_height = 0;
     }
@@ -85,14 +85,14 @@ void LTexture::release()
 
 SDL_Texture* loadTexture(const char* path)
 {
-    SDL_Texture* result = NULL;
+    SDL_Texture* result = nullptr;
 
     SDL_Surface* loaded_surface = IMG_Load(path);
-    if (loaded_surface == NULL) {
+    if (loaded_surface == nullptr) {
         printf("Failed to load %s\n", path);
     } else {
         result = SDL_CreateTextureFromSurface(g_renderer, loaded_surface);
-        if (result == NULL) {
+        if (result == nullptr) {
             printf("Unable to create texture from %s\n", path);
         }
         SDL_FreeSurface(loaded_surface);

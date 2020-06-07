@@ -8,8 +8,10 @@
 #include "polygons.h"
 #include "mobs.h"
 
+/* --------------------------------------------------------------------*/
+
 Mob::Mob()
-    : m_position(), m_world_position(), m_clip(), m_ltexture(NULL), m_width(0), m_height(0)
+    : m_world_position(), m_clip(), m_ltexture(nullptr), m_width(0), m_height(0)
 {
     m_world_position.x = LEVEL_WIDTH*((rand() & 0xFF)/255.0F);
     m_world_position.y = LEVEL_HEIGHT*((rand() & 0xFF)/255.0F);
@@ -26,7 +28,7 @@ Mob::Mob()
 
 Mob::~Mob()
 {
-    m_ltexture = NULL;
+    m_ltexture = nullptr;
 }
 
 BoundingBox Mob::getBoundingBox() const
@@ -34,8 +36,8 @@ BoundingBox Mob::getBoundingBox() const
     BoundingBox bb;
     bb.w = m_width;
     bb.h = m_height;
-    bb.x = m_position.x - bb.w/2;
-    bb.y = m_position.y - bb.h/2;
+    bb.x = (int)(m_world_position.x) - bb.w/2;
+    bb.y = (int)(m_world_position.y) - bb.h/2;
     return bb;
 }
 
@@ -70,8 +72,14 @@ void Mob::move()
     } else if (m_world_position.y > LEVEL_HEIGHT) {
         m_world_position.y = (float)(LEVEL_HEIGHT);
     }
-    m_position.x = (int)m_world_position.x;
-    m_position.y = (int)m_world_position.y;
+}
+
+LevelPosition Mob::getLevelPosition() const
+{
+    LevelPosition p;
+    p.x = (int)m_world_position.x;
+    p.y = (int)m_world_position.y;
+    return p;
 }
 
 void Mob::setLTexture(LTexture* texture)
@@ -81,13 +89,77 @@ void Mob::setLTexture(LTexture* texture)
 
 void Mob::setPosition(LevelPosition pos)
 {
-    m_position = pos;
+    m_world_position.x = (float)pos.x;
+    m_world_position.y = (float)pos.y;
 }
 
 void Mob::setSprite(int row, int col)
 {
     m_clip.x = 32*col;
     m_clip.y = 32*row;
+}
+
+/* --------------------------------------------------------------------*/
+
+PolyMob::PolyMob(int count)
+    : m_model(count), m_transformed(count), m_points(nullptr),
+    m_world_position(), m_rotation(0.0), m_count(count)
+{
+    m_points = new SDL_Point[count + 1];
+}
+
+PolyMob::~PolyMob()
+{
+    if (m_points != nullptr) {
+        delete[] m_points;
+    }
+}
+
+void PolyMob::computeDimensions()
+{
+    auto x_min = m_model[0].x;
+    auto y_min = m_model[0].y;
+    auto x_max = m_model[0].x;
+    auto y_max = m_model[0].y;
+    for (auto i = 1; i < m_model.len(); ++i) {
+        if (m_model[i].x < x_min) {
+            x_min = m_model[i].x;
+        }
+        if (m_model[i].y < y_min) {
+            y_min = m_model[i].y;
+        }
+        if (m_model[i].x > x_max) {
+            x_max = m_model[i].x;
+        }
+        if (m_model[i].y > y_max) {
+            y_max = m_model[i].y;
+        }
+    }
+    m_width = (x_max - x_min);
+    m_height = (y_max - y_min);
+}
+
+int PolyMob::getWidth() const
+{
+    return m_width;
+}
+
+int PolyMob::getHeight() const
+{
+    return m_height;
+}
+
+void PolyMob::setModel(Polygon& model)
+{
+    for (auto i = 0; i < model.len(); ++i) {
+        m_model[i] = model[i];
+    }
+    computeDimensions();
+}
+
+SDL_Point* PolyMob::getSDL_Points()
+{
+    return nullptr;
 }
 
 /* ------------------------ end of file -------------------------------*/
