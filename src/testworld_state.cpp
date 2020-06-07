@@ -3,13 +3,8 @@
 #include <SDL_ttf.h>
 
 #include "game_limits.h"
-#include "game_positions.h"
-#include "game_textures.h"
 #include "globals.h"
-#include "camera.h"
-#include "mobs.h"
 #include "testworld_state.h"
-#include "polygons.h"
 
 TestWorldState::TestWorldState()
     : m_background(), m_player(), m_player_position(),
@@ -73,8 +68,9 @@ void TestWorldState::render(Camera& camera)
 
     camera.render(&(m_player));
 
+#if 0
     SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE);
-    for (int i = 0; i < 160; i = i + 20)
+    for (int i = 0; i < 29*10; i = i + 10)
     {
         SDL_Point p = test_polygon.center();
         test_polygon.translate(-p.x, -p.y);
@@ -82,6 +78,7 @@ void TestWorldState::render(Camera& camera)
         test_polygon.translate(200 + i, 200 + i/4);
         SDL_RenderDrawLines(g_renderer, test_polygon.points(), test_polygon.len());
     }
+#endif
     SDL_SetRenderDrawColor(g_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
     m_frame++;
     r = r + 0.005;
@@ -90,15 +87,14 @@ void TestWorldState::render(Camera& camera)
     }
 }
 
-int TestWorldState::getWidth(void)
+int TestWorldState::getWidth() const
 {
-    return OVER_LEVEL_WIDTH;
+    return test_level_width;
 }
 
-/* height */
-int TestWorldState::getHeight(void)
+int TestWorldState::getHeight() const
 {
-    return OVER_LEVEL_WIDTH;
+    return test_level_height;
 }
 
 /* ------------------------ end of file -------------------------------*/

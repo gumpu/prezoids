@@ -12,7 +12,7 @@
 #include "camera.h"
 #include "tiles.h"
 
-void test_tile_dimensions(void)
+void test_tile_dimensions()
 {
     Tile test_tile;
 
@@ -20,13 +20,13 @@ void test_tile_dimensions(void)
     UAssert(test_tile.m_clip.w == Tile::s_width);
 }
 
-void test_tile_map_dimensions(void)
+void test_tile_map_dimensions()
 {
     TileMap test_tilemap;
 
 }
 
-void register_tiles_tests(void)
+void register_tiles_tests()
 {
     URegister(NULL,  NULL, TSTFUN(test_tile_dimensions), "Tile dimensions");
     URegister(NULL,  NULL, TSTFUN(test_tile_map_dimensions), "Tile map dimensions");

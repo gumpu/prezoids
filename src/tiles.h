@@ -28,9 +28,9 @@ class TileMap {
         TileMap& operator=(const TileMap& source) = delete;
 
         void render(Camera& camera);
-        void setupTilePositions(void);
+        void setupTilePositions();
         int getTileIndex(int column, int row);
-        void setupTestLevel(void);
+        void setupTestLevel();
     private:
         LTexture m_tile_atlas;
         Tile* m_tiles;

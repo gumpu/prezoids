@@ -3,10 +3,6 @@
 #include <SDL_ttf.h>
 
 #include "game_limits.h"
-#include "game_positions.h"
-#include "game_textures.h"
-#include "camera.h"
-#include "mobs.h"
 #include "overworld_state.h"
 
 OverWorldState::OverWorldState()
@@ -62,13 +58,13 @@ void OverWorldState::render(Camera& camera)
     m_frame++;
 }
 
-int OverWorldState::getWidth(void)
+int OverWorldState::getWidth() const
 {
     return OVER_LEVEL_WIDTH;
 }
 
 /* height */
-int OverWorldState::getHeight(void)
+int OverWorldState::getHeight() const
 {
     return OVER_LEVEL_WIDTH;
 }

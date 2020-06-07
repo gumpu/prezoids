@@ -1,6 +1,11 @@
 #ifndef HG_OVERWORLD_STATE_H
 #define HG_OVERWORLD_STATE_H
 
+#include "game_textures.h"
+#include "game_positions.h"
+#include "camera.h"
+#include "mobs.h"
+
 class OverWorldState {
     public:
         OverWorldState();
@@ -8,8 +13,8 @@ class OverWorldState {
         OverWorldState(const OverWorldState& source);
         OverWorldState& operator=(const OverWorldState& source);
 
-        int getWidth(void);
-        int getHeight(void);
+        int getWidth() const;
+        int getHeight() const;
         void render(Camera& camera);
         void movePlayer(int delta_x, int delta_y);
     private:

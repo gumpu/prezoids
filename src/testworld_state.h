@@ -1,6 +1,11 @@
 #ifndef HG_TESTWORLD_STATE_H
 #define HG_TESTWORLD_STATE_H
 
+#include "game_textures.h"
+#include "game_positions.h"
+#include "mobs.h"
+#include "camera.h"
+
 class TestWorldState {
     public:
         TestWorldState();
@@ -8,8 +13,8 @@ class TestWorldState {
         TestWorldState(const TestWorldState& source);
         TestWorldState& operator=(const TestWorldState& source);
 
-        int getWidth(void);
-        int getHeight(void);
+        int getWidth() const;
+        int getHeight() const;
         void render(Camera& camera);
         void movePlayer(int delta_x, int delta_y);
     private:

@@ -43,4 +43,5 @@ Best way to update the ctags file
 <https://www.youtube.com/watch?v=7Ik2vowGcU0>  Convex Polygon Collisions #1
 <https://github.com/OneLoneCoder/olcPixelGameEngine>
 
+<https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines>
 

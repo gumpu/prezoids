@@ -67,7 +67,7 @@ void TileMap::render(Camera& camera)
     }
 }
 
-void TileMap::setupTilePositions(void)
+void TileMap::setupTilePositions()
 {
     for (int c = 0; c < m_number_of_columns; c++) {
         for (int r = 0; r < m_number_of_rows; r++) {
@@ -78,7 +78,7 @@ void TileMap::setupTilePositions(void)
     }
 }
 
-void TileMap::setupTestLevel(void)
+void TileMap::setupTestLevel()
 {
     for (int c = 0; c < m_number_of_columns; c++) {
         for (int r = 0; r < m_number_of_rows; r++) {

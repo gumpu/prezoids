@@ -5,10 +5,10 @@
 Polygon::Polygon(int count)
     : m_capacity(count), m_number_of_points(0), m_points(NULL)
 {
-    m_points = new SDL_Point[count];
+    m_points = new FLT_Point[count];
     for (int i = 0; i < m_capacity; i++) {
-        m_points[i].x = 0;
-        m_points[i].y = 0;
+        m_points[i].x = 0.0;
+        m_points[i].y = 0.0;
     }
 }
 
@@ -19,7 +19,7 @@ Polygon::~Polygon()
     }
 }
 
-SDL_Point& Polygon::operator[] (int i)
+FLT_Point& Polygon::operator[] (int i)
 {
     if ((i+1) > m_number_of_points) {
         m_number_of_points = i + 1;
@@ -27,7 +27,7 @@ SDL_Point& Polygon::operator[] (int i)
     return m_points[i];
 }
 
-void Polygon::translate(int dx, int dy)
+void Polygon::translate(float dx, float dy)
 {
     for (int i = 0; i < m_number_of_points; i++) {
         m_points[i].x += dx;
@@ -35,17 +35,17 @@ void Polygon::translate(int dx, int dy)
     }
 }
 
-SDL_Point Polygon::center(void)
+FLT_Point Polygon::center(void)
 {
-    SDL_Point p;
+    FLT_Point p;
     float xs = 0.0;
     float ys = 0.0;
     for (int i = 0; i < m_number_of_points; i++) {
         xs += m_points[i].x;
         ys += m_points[i].y;
     }
-    p.x = int(xs/m_number_of_points);
-    p.y = int(ys/m_number_of_points);
+    p.x = xs/m_number_of_points;
+    p.y = ys/m_number_of_points;
     return p;
 }
 
@@ -57,8 +57,8 @@ void Polygon::rotate(float angle)
         float x, y;
         x = (m_points[i].x * ca) - (m_points[i].y * sa);
         y = (m_points[i].x * sa) + (m_points[i].y * ca);
-        m_points[i].x = (int)x;
-        m_points[i].y = (int)y;
+        m_points[i].x = x;
+        m_points[i].y = y;
     }
 }
 

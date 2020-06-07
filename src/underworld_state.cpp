@@ -3,12 +3,7 @@
 #include <SDL_ttf.h>
 
 #include "game_limits.h"
-#include "game_positions.h"
 #include "globals.h"
-#include "game_textures.h"
-#include "camera.h"
-#include "mobs.h"
-#include "tiles.h"
 #include "underworld_state.h"
 
 
@@ -31,13 +26,13 @@ UnderWorldState::~UnderWorldState()
 }
 
 
-int UnderWorldState::getWidth(void)
+int UnderWorldState::getWidth() const
 {
     return UNDER_LEVEL_WIDTH;
 }
 
 /* height */
-int UnderWorldState::getHeight(void)
+int UnderWorldState::getHeight() const
 {
     return UNDER_LEVEL_WIDTH;
 }
@@ -80,7 +75,7 @@ void UnderWorldState::render(Camera& camera)
     m_frame++;
 }
 
-void UnderWorldState::setupTestLevel(void)
+void UnderWorldState::setupTestLevel()
 {
     m_tile_map.setupTestLevel();
 }

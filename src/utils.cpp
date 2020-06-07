@@ -1,6 +1,6 @@
 #include <time.h>
 
-double get_hp_time( void )
+double get_hp_time()
 {
     struct timespec tp;
     (void)clock_gettime( CLOCK_REALTIME, &tp );

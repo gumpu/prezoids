@@ -1,6 +1,7 @@
 #ifndef HG_CAMERA_H
 #define HG_CAMERA_H
 
+#include "game_positions.h"
 class Mob;
 class LTexture;
 class Tile;

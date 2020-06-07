@@ -1,6 +1,9 @@
 #ifndef HG_START_SCREEN_STATE_H
 #define HG_START_SCREEN_STATE_H
 
+#include "game_textures.h"
+#include "camera.h"
+
 class StartScreenState {
     public:
         StartScreenState();

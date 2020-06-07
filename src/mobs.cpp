@@ -5,6 +5,7 @@
 #include "game_limits.h"
 #include "game_textures.h"
 #include "game_positions.h"
+#include "polygons.h"
 #include "mobs.h"
 
 Mob::Mob()
@@ -28,7 +29,7 @@ Mob::~Mob()
     m_ltexture = NULL;
 }
 
-BoundingBox Mob::getBoundingBox(void)
+BoundingBox Mob::getBoundingBox() const
 {
     BoundingBox bb;
     bb.w = m_width;
@@ -38,12 +39,12 @@ BoundingBox Mob::getBoundingBox(void)
     return bb;
 }
 
-int Mob::getWidth(void)
+int Mob::getWidth() const
 {
     return m_width;
 }
 
-int Mob::getHeight(void)
+int Mob::getHeight() const
 {
     return m_height;
 }
@@ -53,7 +54,7 @@ void Mob::render(CameraRelativePosition position)
     m_ltexture->render(position.x, position.y, &m_clip);
 }
 
-void Mob::move(void)
+void Mob::move()
 {
     float dx = 5*((rand() & 0xFF)/255.0F - 0.5F);
     float dy = 5*((rand() & 0xFF)/255.0F - 0.5F);

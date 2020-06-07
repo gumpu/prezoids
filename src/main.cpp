@@ -9,12 +9,7 @@
 #include <SDL_ttf.h>
 
 #include "game_limits.h"
-#include "game_positions.h"
 #include "globals.h"
-#include "game_textures.h"
-#include "camera.h"
-#include "mobs.h"
-#include "tiles.h"
 #include "start_screen_state.h"
 #include "overworld_state.h"
 #include "testworld_state.h"
@@ -23,11 +18,11 @@
 
 /* ======================================================================= */
 
-enum GameState {
-    GS_StartScreen, GS_MainMenu, GS_OverWorld, GS_UnderWorld, GS_TestWorld
+enum class GameState {
+    StartScreen, MainMenu, OverWorld, UnderWorld, TestWorld
 };
-enum GameEvent {
-    GE_None, GE_ToMain, GE_ToOverWorld, GE_ToUnderWorld, GE_ToTestWorld, GE_ToExit
+enum class GameEvent {
+    None, ToMain, ToOverWorld, ToUnderWorld, ToTestWorld, ToExit
 };
 
 /* ======================================================================= */
@@ -36,7 +31,7 @@ bool process_events(int& delta_x, int& delta_y, enum GameEvent& game_event)
 {
     SDL_Event e;
     bool keep_going = true;
-    game_event = GE_None;
+    game_event = GameEvent::None;
     while(SDL_PollEvent(&e) != 0) {
         if (e.type == SDL_QUIT) {
             keep_going = false;
@@ -44,11 +39,11 @@ bool process_events(int& delta_x, int& delta_y, enum GameEvent& game_event)
             if (e.key.keysym.sym == SDLK_q) {
                 keep_going = false;
             } else if (e.key.keysym.sym == SDLK_t) {
-                game_event = GE_ToTestWorld;
+                game_event = GameEvent::ToTestWorld;
             } else if (e.key.keysym.sym == SDLK_g) {
-                game_event = GE_ToOverWorld;
+                game_event = GameEvent::ToOverWorld;
             } else if (e.key.keysym.sym == SDLK_u) {
-                game_event = GE_ToUnderWorld;
+                game_event = GameEvent::ToUnderWorld;
             }
         } else if (e.type == SDL_JOYAXISMOTION) {
             if (e.jaxis.which == 0) {
@@ -80,8 +75,8 @@ bool process_events(int& delta_x, int& delta_y, enum GameEvent& game_event)
 /* --------------------------------------------------------------------*/
 void main_loop2(void)
 {
-    enum GameState current_game_state = GS_StartScreen;
-    enum GameEvent game_event = GE_None;
+    enum GameState current_game_state = GameState::StartScreen;
+    enum GameEvent game_event = GameEvent::None;
     bool keep_going = true;
     int delta_x = 0;
     int delta_y = 0;
@@ -98,16 +93,16 @@ void main_loop2(void)
 
         /* Process game event */
         switch(game_event) {
-            case GE_ToOverWorld:
-                current_game_state = GS_OverWorld;
+            case GameEvent::ToOverWorld:
+                current_game_state = GameState::OverWorld;
                 break;
-            case GE_ToUnderWorld:
-                current_game_state = GS_UnderWorld;
+            case GameEvent::ToUnderWorld:
+                current_game_state = GameState::UnderWorld;
                 break;
-            case GE_ToTestWorld:
-                current_game_state = GS_TestWorld;
+            case GameEvent::ToTestWorld:
+                current_game_state = GameState::TestWorld;
                 break;
-            case GE_None:
+            case GameEvent::None:
             default:
                 break;
         }
@@ -115,20 +110,20 @@ void main_loop2(void)
         SDL_SetRenderDrawColor(g_renderer, 0xA0, 0xA0, 0xA0, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(g_renderer);
         switch (current_game_state) {
-            case GS_StartScreen:
+            case GameState::StartScreen:
                 start_screen_state.render(camera);
                 break;
-            case GS_MainMenu:
+            case GameState::MainMenu:
                 break;
-            case GS_TestWorld:
+            case GameState::TestWorld:
                 test_world_state.movePlayer(delta_x, delta_y);
                 test_world_state.render(camera);
                 break;
-            case GS_OverWorld:
+            case GameState::OverWorld:
                 over_world_state.movePlayer(delta_x, delta_y);
                 over_world_state.render(camera);
                 break;
-            case GS_UnderWorld:
+            case GameState::UnderWorld:
                 under_world_state.movePlayer(delta_x, delta_y);
                 under_world_state.render(camera);
                 break;

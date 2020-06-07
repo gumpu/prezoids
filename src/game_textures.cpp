@@ -72,7 +72,7 @@ bool LTexture::loadFromFile(const char* path)
     return result;
 }
 
-void LTexture::release(void)
+void LTexture::release()
 {
     if (m_texture != NULL) {
         SDL_DestroyTexture(m_texture);

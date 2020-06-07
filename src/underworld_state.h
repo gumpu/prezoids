@@ -1,6 +1,12 @@
 #ifndef HG_UNDERWORLD_STATE_H
 #define HG_UNDERWORLD_STATE_H
 
+#include "game_textures.h"
+#include "game_positions.h"
+#include "mobs.h"
+#include "camera.h"
+#include "tiles.h"
+
 class UnderWorldState {
     public:
         UnderWorldState();
@@ -8,12 +14,12 @@ class UnderWorldState {
         UnderWorldState(const UnderWorldState& source);
         UnderWorldState& operator=(const UnderWorldState& source);
 
-        int getWidth(void);
-        int getHeight(void);
+        int getWidth() const;
+        int getHeight() const;
         void render(Camera& camera);
         void movePlayer(int delta_x, int delta_y);
 
-        void setupTestLevel(void);
+        void setupTestLevel();
     private:
         SDL_Texture* m_tile_atlas;
         TileMap m_tile_map;

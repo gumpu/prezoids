@@ -6,6 +6,7 @@
 #include "game_positions.h"
 #include "globals.h"
 #include "game_textures.h"
+#include "polygons.h"
 #include "mobs.h"
 #include "camera.h"
 #include "tiles.h"
