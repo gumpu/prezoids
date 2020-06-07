@@ -2,6 +2,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
+#include "globals.h"
 #include "game_limits.h"
 #include "game_textures.h"
 #include "game_positions.h"
@@ -77,8 +78,8 @@ void Mob::move()
 LevelPosition Mob::getLevelPosition() const
 {
     LevelPosition p;
-    p.x = (int)m_world_position.x;
-    p.y = (int)m_world_position.y;
+    p.x = m_world_position.x;
+    p.y = m_world_position.y;
     return p;
 }
 
@@ -89,8 +90,8 @@ void Mob::setLTexture(LTexture* texture)
 
 void Mob::setPosition(LevelPosition pos)
 {
-    m_world_position.x = (float)pos.x;
-    m_world_position.y = (float)pos.y;
+    m_world_position.x = pos.x;
+    m_world_position.y = pos.y;
 }
 
 void Mob::setSprite(int row, int col)
@@ -139,6 +140,11 @@ void PolyMob::computeDimensions()
     m_height = (y_max - y_min);
 }
 
+void PolyMob::setRotation(float r)
+{
+    m_rotation = r;
+}
+
 int PolyMob::getWidth() const
 {
     return m_width;
@@ -157,9 +163,44 @@ void PolyMob::setModel(Polygon& model)
     computeDimensions();
 }
 
+void PolyMob::transform(CameraRelativePosition pos)
+{
+    for (auto i = 0; i < m_model.len(); ++i) {
+        m_transformed[i] = m_model[i];
+    }
+    m_transformed.rotate(m_rotation);
+    m_transformed.translate(pos.x, pos.y);
+    for (auto i = 0; i < m_model.len(); ++i) {
+        m_points[i].x = m_transformed[i].x;
+        m_points[i].y = m_transformed[i].y;
+    }
+    m_points[m_model.len()].x = m_transformed[0].x;
+    m_points[m_model.len()].y = m_transformed[0].y;
+}
+
+LevelPosition PolyMob::getLevelPosition() const
+{
+    LevelPosition p;
+    p.x = m_world_position.x;
+    p.y = m_world_position.y;
+    return p;
+}
+
 SDL_Point* PolyMob::getSDL_Points()
 {
-    return nullptr;
+    return m_points;
+}
+
+void PolyMob::render(CameraRelativePosition position)
+{
+    transform(position);
+    SDL_RenderDrawLines(g_renderer, getSDL_Points(), len_sdl());
+}
+
+void PolyMob::setPosition(LevelPosition pos)
+{
+    m_world_position.x = pos.x;
+    m_world_position.y = pos.y;
 }
 
 /* ------------------------ end of file -------------------------------*/

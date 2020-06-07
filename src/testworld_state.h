@@ -4,19 +4,23 @@
 #include "game_textures.h"
 #include "game_positions.h"
 #include "mobs.h"
-#include "camera.h"
+
+class Camera;
 
 class TestWorldState {
     public:
         TestWorldState();
         ~TestWorldState();
-        TestWorldState(const TestWorldState& source);
-        TestWorldState& operator=(const TestWorldState& source);
+
+        TestWorldState(const TestWorldState& source) = delete;
+        TestWorldState& operator=(const TestWorldState& source) = delete;
 
         int getWidth() const;
         int getHeight() const;
         void render(Camera& camera);
         void movePlayer(int delta_x, int delta_y);
+        void setupLevel();
+
     private:
         SDL_Texture* m_background;
         Mob m_player;
@@ -27,6 +31,8 @@ class TestWorldState {
         int m_delta_x;
         int m_delta_y;
         char m_buffer[160];
+
+        PolyMob* pmobs[100];
 };
 
 #endif /* HG_TESTWORLD_STATE_H */

@@ -37,13 +37,19 @@ class PolyMob {
 
         PolyMob(const PolyMob& source) = delete;
         PolyMob& operator=(const PolyMob& source) = delete;
+
         int len() const { return m_model.len(); };
         int len_sdl() const { return m_model.len()+1; };
         void setModel(Polygon& model);
         SDL_Point* getSDL_Points();
-
+        LevelPosition getLevelPosition() const;
+        void transform(CameraRelativePosition pos);
+        void render(CameraRelativePosition position);
         int getWidth() const;
         int getHeight() const;
+        void setPosition(LevelPosition pos);
+        void setRotation(float r);
+
     private:
         void computeDimensions();
 

@@ -61,7 +61,31 @@ void Camera::render(PolyMob* mob) const
 {
     CameraRelativePosition pos;
     LevelPosition mob_position;
+    int w = mob->getWidth();
+    int h = mob->getHeight();
+    mob_position = mob->getLevelPosition();
+    pos.x = mob_position.x - w/2;
+    pos.y = mob_position.y - h/2;
+    pos.x = pos.x - m_camera_rect.x;
 
+    if (pos.x < (0-w)) {
+        /* Don't render */
+    } else {
+        if (pos.x < m_camera_rect.w) {
+            pos.y = pos.y - m_camera_rect.y;
+            if (pos.y < (0-h)) {
+                /* Don't render */
+            } else {
+                if (pos.y > m_camera_rect.h) {
+                    /* Don't render */
+                } else {
+                    mob->render(pos);
+                }
+            }
+        } else {
+            /* Don't render */
+        }
+    }
 }
 
 void Camera::render(LTexture& tile_atlas, Tile& tile) const
